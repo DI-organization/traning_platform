@@ -1,0 +1,456 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────────────────────────────────
+
+enum Role {
+  TRAINER
+  TRAINEE
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  WITHDRAWN
+}
+
+enum WeekUnlockStrategy {
+  AUTOMATIC_BY_DATE
+  MANUAL
+}
+
+enum ResourceType {
+  DOCUMENTATION
+  ARTICLE
+  VIDEO
+  COURSE
+  BOOK
+  OTHER
+}
+
+enum TaskType {
+  LEARNING
+  CODING
+  PROBLEM_SOLVING
+  RESEARCH
+  PROJECT
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+// Per-trainee status of a task assignment
+enum AssignmentStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  SUBMITTED
+  CHANGES_REQUESTED
+  APPROVED
+  OVERDUE
+}
+
+enum SubmissionStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  CHANGES_REQUESTED
+  APPROVED
+}
+
+enum ReviewDecision {
+  APPROVED
+  CHANGES_REQUESTED
+}
+
+enum NotificationType {
+  TASK_ASSIGNED
+  DEADLINE_TOMORROW
+  TASK_OVERDUE
+  SUBMISSION_RECEIVED
+  SUBMISSION_APPROVED
+  CHANGES_REQUESTED
+  FEEDBACK_LEFT
+  WEEK_AVAILABLE
+  GENERAL
+}
+
+enum ActivityType {
+  USER_LOGGED_IN
+  TASK_STARTED
+  SUBMISSION_CREATED
+  SUBMISSION_UPDATED
+  SUBMISSION_REVIEWED
+  CHANGES_REQUESTED
+  SUBMISSION_APPROVED
+  WEEK_COMPLETED
+  RESEARCH_ANSWER_SUBMITTED
+  RESEARCH_ANSWER_REVIEWED
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Users
+// ─────────────────────────────────────────────────────────────────────────
+
+model User {
+  id                String    @id @default(uuid())
+  firstName         String
+  lastName          String
+  email             String    @unique
+  passwordHash      String
+  role              Role      @default(TRAINEE)
+  avatar            String?
+  phone             String?
+  githubUsername    String?
+  isActive          Boolean   @default(true)
+  lastLoginAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  enrollments       ProgramEnrollment[]
+  taskAssignments   TaskAssignment[]
+  submissions       Submission[]       @relation("SubmitterSubmissions")
+  reviewsGiven      SubmissionReview[] @relation("ReviewerReviews")
+  evaluationsGiven  Evaluation[]       @relation("EvaluatorEvaluations")
+  researchAnswers   ResearchAnswer[]
+  notifications     Notification[]
+  activityLogs      ActivityLog[]
+  githubProfile     GitHubProfile?
+  createdTasks      Task[]             @relation("TaskCreatedBy")
+
+  @@index([role])
+  @@index([isActive])
+}
+
+model GitHubProfile {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  username    String
+  profileUrl  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Training Program
+// ─────────────────────────────────────────────────────────────────────────
+
+model TrainingProgram {
+  id                  String              @id @default(uuid())
+  title               String
+  description         String
+  totalWeeks          Int                 @default(12)
+  weekUnlockStrategy  WeekUnlockStrategy  @default(MANUAL)
+  isActive            Boolean             @default(true)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  weeks               Week[]
+  enrollments         ProgramEnrollment[]
+}
+
+model ProgramEnrollment {
+  id           String            @id @default(uuid())
+  userId       String
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  programId    String
+  program      TrainingProgram   @relation(fields: [programId], references: [id], onDelete: Cascade)
+  currentWeek  Int               @default(1)
+  status       EnrollmentStatus  @default(ACTIVE)
+  enrolledAt   DateTime          @default(now())
+  completedAt  DateTime?
+
+  @@unique([userId, programId])
+  @@index([programId])
+}
+
+model Week {
+  id                      String   @id @default(uuid())
+  programId               String
+  program                 TrainingProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  weekNumber              Int
+  title                   String
+  description             String
+  objectives              String[]
+  weeklyProjectTitle      String?
+  weeklyProjectDescription String?
+  submissionRequirements  String[]
+  startDate               DateTime?
+  endDate                 DateTime?
+  isLocked                Boolean  @default(true)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  topics                  Topic[]
+  resources               Resource[]
+  tasks                   Task[]
+  researchQuestions       ResearchQuestion[]
+
+  @@unique([programId, weekNumber])
+}
+
+model Topic {
+  id        String   @id @default(uuid())
+  weekId    String
+  week      Week     @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  title     String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([weekId])
+}
+
+model Resource {
+  id                String       @id @default(uuid())
+  weekId            String
+  week              Week         @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  title             String
+  description       String
+  url               String
+  type              ResourceType @default(DOCUMENTATION)
+  isRequired        Boolean      @default(false)
+  estimatedMinutes  Int?
+  topic             String?
+  order             Int          @default(0)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@index([weekId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Tasks
+// ─────────────────────────────────────────────────────────────────────────
+
+model Task {
+  id                  String         @id @default(uuid())
+  code                String         @unique
+  title               String
+  description         String
+  weekId              String
+  week                Week           @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  type                TaskType       @default(CODING)
+  priority             TaskPriority   @default(MEDIUM)
+  difficulty          TaskDifficulty @default(MEDIUM)
+  points              Int            @default(10)
+  estimatedHours      Float          @default(2)
+  dueDate             DateTime?
+  instructions        String
+  acceptanceCriteria  String[]
+  order               Int            @default(0)
+  isWeeklyProject     Boolean        @default(false)
+  createdById         String?
+  createdBy           User?          @relation("TaskCreatedBy", fields: [createdById], references: [id])
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  assignments         TaskAssignment[]
+  submissions         Submission[]
+
+  @@index([weekId])
+  @@index([type])
+}
+
+// Per-trainee tracking of a task
+model TaskAssignment {
+  id          String            @id @default(uuid())
+  taskId      String
+  task        Task              @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status      AssignmentStatus  @default(NOT_STARTED)
+  dueDate     DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@unique([taskId, userId])
+  @@index([userId])
+  @@index([status])
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Submissions & Reviews
+// ─────────────────────────────────────────────────────────────────────────
+
+model Submission {
+  id              String            @id @default(uuid())
+  taskId          String
+  task            Task              @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User              @relation("SubmitterSubmissions", fields: [userId], references: [id], onDelete: Cascade)
+  attemptNumber   Int               @default(1)
+  repositoryUrl   String?
+  branchName      String?
+  pullRequestUrl  String?
+  liveDemoUrl     String?
+  notes           String?
+  status          SubmissionStatus  @default(SUBMITTED)
+  submittedAt     DateTime          @default(now())
+  reviewedAt      DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  reviews         SubmissionReview[]
+  evaluation      Evaluation?
+  githubRepository GitHubRepository?
+  githubPullRequest GitHubPullRequest?
+
+  @@index([taskId])
+  @@index([userId])
+  @@index([status])
+}
+
+model SubmissionReview {
+  id            String          @id @default(uuid())
+  submissionId  String
+  submission    Submission      @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  reviewerId    String
+  reviewer      User            @relation("ReviewerReviews", fields: [reviewerId], references: [id])
+  decision      ReviewDecision
+  feedback      String
+  createdAt     DateTime        @default(now())
+
+  @@index([submissionId])
+}
+
+model Evaluation {
+  id                       String     @id @default(uuid())
+  submissionId             String     @unique
+  submission               Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  evaluatorId              String
+  evaluator                User       @relation("EvaluatorEvaluations", fields: [evaluatorId], references: [id])
+  taskCompletion           Int        @default(0)
+  functionality            Int        @default(0)
+  codeQuality              Int        @default(0)
+  architecture             Int        @default(0)
+  gitUsage                 Int        @default(0)
+  problemSolving           Int        @default(0)
+  documentation            Int        @default(0)
+  testing                  Int        @default(0)
+  technicalUnderstanding   Int        @default(0)
+  totalScore               Int        @default(0)
+  createdAt                DateTime   @default(now())
+  updatedAt                DateTime   @updatedAt
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// GitHub metadata cache (public API; no OAuth yet — see README for
+// future architecture supporting OAuth/webhooks without a rewrite)
+// ─────────────────────────────────────────────────────────────────────────
+
+model GitHubRepository {
+  id             String    @id @default(uuid())
+  submissionId   String    @unique
+  submission     Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  owner          String
+  name           String
+  description    String?
+  defaultBranch  String?
+  lastPushAt     DateTime?
+  stars          Int?
+  forks          Int?
+  languages      Json?
+  fetchStatus    String    @default("PENDING") // PENDING | OK | FAILED | NOT_FOUND
+  fetchedAt      DateTime?
+}
+
+model GitHubPullRequest {
+  id            String     @id @default(uuid())
+  submissionId  String     @unique
+  submission    Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  owner         String
+  repo          String
+  number        Int
+  title         String?
+  state         String?
+  author        String?
+  prCreatedAt   DateTime?
+  prUpdatedAt   DateTime?
+  mergedAt      DateTime?
+  fetchStatus   String     @default("PENDING")
+  fetchedAt     DateTime?
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Research
+// ─────────────────────────────────────────────────────────────────────────
+
+model ResearchQuestion {
+  id        String   @id @default(uuid())
+  weekId    String
+  week      Week     @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  question  String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  answers   ResearchAnswer[]
+
+  @@index([weekId])
+}
+
+model ResearchAnswer {
+  id           String    @id @default(uuid())
+  questionId   String
+  question     ResearchQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answer       String
+  score        Int?
+  feedback     String?
+  submittedAt  DateTime  @default(now())
+  reviewedAt   DateTime?
+
+  @@unique([questionId, userId])
+  @@index([userId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Notifications & Activity
+// ─────────────────────────────────────────────────────────────────────────
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      NotificationType @default(GENERAL)
+  isRead    Boolean          @default(false)
+  link      String?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, isRead])
+}
+
+model ActivityLog {
+  id          String       @id @default(uuid())
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        ActivityType
+  description String
+  metadata    Json?
+  createdAt   DateTime     @default(now())
+
+  @@index([userId])
+  @@index([type])
+}

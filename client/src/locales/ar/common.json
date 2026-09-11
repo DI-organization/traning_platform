@@ -1,0 +1,34 @@
+{
+  "actions": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "create": "إنشاء",
+    "search": "بحث",
+    "filter": "تصفية",
+    "viewDetails": "عرض التفاصيل",
+    "submit": "إرسال",
+    "update": "تحديث",
+    "approve": "قبول",
+    "requestChanges": "طلب تعديلات",
+    "markAllRead": "تحديد الكل كمقروء",
+    "logout": "تسجيل الخروج",
+    "retry": "إعادة المحاولة",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "close": "إغلاق",
+    "confirm": "تأكيد"
+  },
+  "status": {
+    "loading": "جارٍ التحميل...",
+    "error": "حدث خطأ ما",
+    "empty": "لا يوجد شيء هنا بعد",
+    "active": "نشط",
+    "inactive": "غير نشط"
+  },
+  "app": {
+    "name": "منصة التدريب"
+  }
+}

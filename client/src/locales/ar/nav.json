@@ -1,0 +1,24 @@
+{
+  "trainer": {
+    "dashboard": "لوحة التحكم",
+    "trainees": "المتدربون",
+    "program": "البرنامج التدريبي",
+    "tasks": "المهام",
+    "submissions": "التسليمات",
+    "resources": "المصادر",
+    "analytics": "التحليلات",
+    "settings": "الإعدادات"
+  },
+  "trainee": {
+    "dashboard": "لوحة التحكم",
+    "program": "برنامجي",
+    "tasks": "مهامي",
+    "submissions": "تسليماتي",
+    "feedback": "الملاحظات والدرجات",
+    "resources": "المصادر",
+    "profile": "الملف الشخصي"
+  },
+  "notifications": "الإشعارات",
+  "profile": "الملف الشخصي",
+  "settings": "الإعدادات"
+}

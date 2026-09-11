@@ -1,0 +1,24 @@
+{
+  "trainer": {
+    "dashboard": "Dashboard",
+    "trainees": "Trainees",
+    "program": "Training Program",
+    "tasks": "Tasks",
+    "submissions": "Submissions",
+    "resources": "Resources",
+    "analytics": "Analytics",
+    "settings": "Settings"
+  },
+  "trainee": {
+    "dashboard": "Dashboard",
+    "program": "My Program",
+    "tasks": "My Tasks",
+    "submissions": "My Submissions",
+    "feedback": "Feedback & Scores",
+    "resources": "Resources",
+    "profile": "Profile"
+  },
+  "notifications": "Notifications",
+  "profile": "Profile",
+  "settings": "Settings"
+}
