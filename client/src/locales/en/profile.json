@@ -1,0 +1,26 @@
+{
+  "title": "Profile",
+  "subtitle": "Manage your personal information and preferences.",
+  "tabs": {
+    "personal": "Personal Information",
+    "password": "Password",
+    "language": "Language"
+  },
+  "personal": {
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phone": "Phone",
+    "githubUsername": "GitHub username",
+    "avatarUrl": "Avatar URL",
+    "saveChanges": "Save changes",
+    "updated": "Profile updated"
+  },
+  "password": {
+    "title": "Change Password",
+    "current": "Current password",
+    "new": "New password",
+    "submit": "Update password",
+    "changed": "Password changed",
+    "error": "Could not change password"
+  }
+}

@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Menu, User as UserIcon, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,6 +12,7 @@ import { useLogout } from "@/hooks/useAuth";
 import { initials } from "@/lib/format";
 
 export function Navbar({ breadcrumb }: { breadcrumb?: React.ReactNode }) {
+  const { t } = useTranslation(["nav", "common"]);
   const user = useAuthStore((s) => s.user);
   const setMobileOpen = useUiStore((s) => s.setMobileSidebarOpen);
   const logout = useLogout();
@@ -47,14 +49,14 @@ export function Navbar({ breadcrumb }: { breadcrumb?: React.ReactNode }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate(settingsPath)}>
-              <UserIcon className="h-4 w-4" /> Profile
+              <UserIcon className="h-4 w-4" /> {t("nav:profile")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigate(settingsPath)}>
-              <Settings className="h-4 w-4" /> Settings
+              <Settings className="h-4 w-4" /> {t("nav:settings")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
-              <LogOut className="h-4 w-4" /> Log out
+              <LogOut className="h-4 w-4" /> {t("common:actions.logout")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

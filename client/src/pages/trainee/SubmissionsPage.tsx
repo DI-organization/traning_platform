@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -16,6 +17,7 @@ import type { SubmissionStatus } from "@/types";
 const STATUSES: SubmissionStatus[] = ["SUBMITTED", "UNDER_REVIEW", "CHANGES_REQUESTED", "APPROVED"];
 
 export default function TraineeSubmissionsPage() {
+  const { t } = useTranslation(["submissions", "common"]);
   const user = useAuthStore((s) => s.user);
   const [status, setStatus] = useState<string>("all");
   const [page, setPage] = useState(1);
@@ -29,14 +31,14 @@ export default function TraineeSubmissionsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="My Submissions" description="Your task submissions and their review status." />
+      <PageHeader title={t("submissions:trainee.title")} description={t("submissions:trainee.subtitle")} />
 
       <Select value={status} onValueChange={(v) => { setStatus(v); setPage(1); }}>
         <SelectTrigger className="w-full sm:w-52"><SelectValue /></SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All statuses</SelectItem>
+          <SelectItem value="all">{t("submissions:trainee.allStatuses")}</SelectItem>
           {STATUSES.map((s) => (
-            <SelectItem key={s} value={s}>{s.replace("_", " ")}</SelectItem>
+            <SelectItem key={s} value={s}>{t(`common:statusLabels.${s}`)}</SelectItem>
           ))}
         </SelectContent>
       </Select>
@@ -48,7 +50,7 @@ export default function TraineeSubmissionsPage() {
           ) : isLoading ? (
             <div className="p-5"><TableSkeleton rows={8} cols={3} /></div>
           ) : !data || data.items.length === 0 ? (
-            <EmptyState className="border-0" title="No submissions yet" description="Submit your first task to see it here." />
+            <EmptyState className="border-0" title={t("submissions:trainee.noResultsTitle")} description={t("submissions:trainee.noResultsDescription")} />
           ) : (
             <div className="divide-y">
               {data.items.map((s) => (
@@ -56,10 +58,10 @@ export default function TraineeSubmissionsPage() {
                   <div>
                     <div className="flex items-center gap-2">
                       <Badge variant="outline">{s.task?.code}</Badge>
-                      <span className="text-xs text-muted-foreground">Attempt #{s.attemptNumber}</span>
+                      <span className="text-xs text-muted-foreground">{t("submissions:trainee.attempt", { number: s.attemptNumber })}</span>
                     </div>
                     <p className="mt-1 font-medium">{s.task?.title}</p>
-                    <p className="text-xs text-muted-foreground">Submitted {formatRelativeTime(s.submittedAt)}</p>
+                    <p className="text-xs text-muted-foreground">{t("common:table.submitted")} {formatRelativeTime(s.submittedAt)}</p>
                   </div>
                   <StatusBadge status={s.status} />
                 </Link>
@@ -71,10 +73,10 @@ export default function TraineeSubmissionsPage() {
 
       {data && data.pagination.totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>Page {data.pagination.page} of {data.pagination.totalPages}</span>
+          <span>{t("common:pagination.pageOf", { page: data.pagination.page, totalPages: data.pagination.totalPages })}</span>
           <div className="flex gap-2">
-            <button className="rounded-md border px-3 py-1 disabled:opacity-50" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>Previous</button>
-            <button className="rounded-md border px-3 py-1 disabled:opacity-50" disabled={page >= data.pagination.totalPages} onClick={() => setPage((p) => p + 1)}>Next</button>
+            <button className="rounded-md border px-3 py-1 disabled:opacity-50" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>{t("common:actions.previous")}</button>
+            <button className="rounded-md border px-3 py-1 disabled:opacity-50" disabled={page >= data.pagination.totalPages} onClick={() => setPage((p) => p + 1)}>{t("common:actions.next")}</button>
           </div>
         </div>
       )}

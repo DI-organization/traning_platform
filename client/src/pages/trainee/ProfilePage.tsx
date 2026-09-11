@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { Github, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +18,7 @@ import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import * as authApi from "@/api/auth";
 
 export default function TraineeProfilePage() {
+  const { t } = useTranslation(["profile", "common"]);
   const user = useAuthStore((s) => s.user);
   const setUser = useAuthStore((s) => s.setUser);
   const updateProfile = useUpdateMyProfile();
@@ -35,7 +37,7 @@ export default function TraineeProfilePage() {
     updateProfile.mutate(values, {
       onSuccess: (updated) => {
         setUser(updated);
-        toast.success("Profile updated");
+        toast.success(t("profile:personal.updated"));
       },
       onError: (error) => toast.error(getErrorMessage(error)),
     });
@@ -50,17 +52,17 @@ export default function TraineeProfilePage() {
   const changePassword = useMutation({
     mutationFn: (values: { currentPassword: string; newPassword: string }) => authApi.changePassword(values.currentPassword, values.newPassword),
     onSuccess: () => {
-      toast.success("Password changed");
+      toast.success(t("profile:password.changed"));
       resetPassword();
     },
-    onError: (error) => toast.error(getErrorMessage(error, "Could not change password")),
+    onError: (error) => toast.error(getErrorMessage(error, t("profile:password.error"))),
   });
 
   if (!user) return null;
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Profile" description="Manage your personal information and preferences." />
+      <PageHeader title={t("profile:title")} description={t("profile:subtitle")} />
 
       <div className="flex items-center gap-4">
         <Avatar className="h-16 w-16">
@@ -75,9 +77,9 @@ export default function TraineeProfilePage() {
 
       <Tabs defaultValue="personal">
         <TabsList>
-          <TabsTrigger value="personal">Personal Information</TabsTrigger>
-          <TabsTrigger value="password">Password</TabsTrigger>
-          <TabsTrigger value="language">Language</TabsTrigger>
+          <TabsTrigger value="personal">{t("profile:tabs.personal")}</TabsTrigger>
+          <TabsTrigger value="password">{t("profile:tabs.password")}</TabsTrigger>
+          <TabsTrigger value="language">{t("profile:tabs.language")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="personal">
@@ -86,29 +88,29 @@ export default function TraineeProfilePage() {
               <form onSubmit={onSave} className="max-w-md space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label>First name</Label>
+                    <Label>{t("profile:personal.firstName")}</Label>
                     <Input {...register("firstName")} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label>Last name</Label>
+                    <Label>{t("profile:personal.lastName")}</Label>
                     <Input {...register("lastName")} />
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Phone</Label>
+                  <Label>{t("profile:personal.phone")}</Label>
                   <Input {...register("phone")} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="flex items-center gap-1"><Github className="h-3.5 w-3.5" /> GitHub username</Label>
+                  <Label className="flex items-center gap-1"><Github className="h-3.5 w-3.5" /> {t("profile:personal.githubUsername")}</Label>
                   <Input placeholder="octocat" {...register("githubUsername")} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Avatar URL</Label>
+                  <Label>{t("profile:personal.avatarUrl")}</Label>
                   <Input placeholder="https://..." {...register("avatar")} />
                 </div>
                 <Button type="submit" disabled={updateProfile.isPending}>
                   {updateProfile.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Save changes
+                  {t("profile:personal.saveChanges")}
                 </Button>
               </form>
             </CardContent>
@@ -117,23 +119,23 @@ export default function TraineeProfilePage() {
 
         <TabsContent value="password">
           <Card>
-            <CardHeader><CardTitle>Change Password</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t("profile:password.title")}</CardTitle></CardHeader>
             <CardContent>
               <form
                 onSubmit={handlePasswordSubmit((values) => changePassword.mutate(values))}
                 className="max-w-md space-y-4"
               >
                 <div className="space-y-1.5">
-                  <Label>Current password</Label>
+                  <Label>{t("profile:password.current")}</Label>
                   <Input type="password" {...registerPassword("currentPassword", { required: true })} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>New password</Label>
+                  <Label>{t("profile:password.new")}</Label>
                   <Input type="password" {...registerPassword("newPassword", { required: true, minLength: 8 })} />
                 </div>
                 <Button type="submit" disabled={changePassword.isPending}>
                   {changePassword.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Update password
+                  {t("profile:password.submit")}
                 </Button>
               </form>
             </CardContent>
@@ -142,7 +144,7 @@ export default function TraineeProfilePage() {
 
         <TabsContent value="language">
           <Card>
-            <CardHeader><CardTitle>Language</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t("profile:tabs.language")}</CardTitle></CardHeader>
             <CardContent>
               <LanguageSwitcher />
             </CardContent>

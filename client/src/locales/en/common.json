@@ -1,13 +1,17 @@
 {
   "actions": {
     "save": "Save",
+    "saveChanges": "Save changes",
     "cancel": "Cancel",
     "edit": "Edit",
     "delete": "Delete",
     "create": "Create",
+    "add": "Add",
     "search": "Search",
     "filter": "Filter",
     "viewDetails": "View details",
+    "viewAll": "View all",
+    "manage": "Manage",
     "submit": "Submit",
     "update": "Update",
     "approve": "Approve",
@@ -26,7 +30,83 @@
     "error": "Something went wrong",
     "empty": "Nothing here yet",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "required": "Required",
+    "optional": "Optional",
+    "locked": "Locked",
+    "unlocked": "Unlocked"
+  },
+  "statusLabels": {
+    "NOT_STARTED": "Not Started",
+    "IN_PROGRESS": "In Progress",
+    "SUBMITTED": "Submitted",
+    "UNDER_REVIEW": "Under Review",
+    "CHANGES_REQUESTED": "Changes Requested",
+    "APPROVED": "Approved",
+    "OVERDUE": "Overdue",
+    "ACTIVE": "Active",
+    "INACTIVE": "Inactive",
+    "PAUSED": "Paused",
+    "COMPLETED": "Completed",
+    "WITHDRAWN": "Withdrawn"
+  },
+  "priorityLabels": {
+    "LOW": "Low",
+    "MEDIUM": "Medium",
+    "HIGH": "High",
+    "URGENT": "Urgent"
+  },
+  "difficultyLabels": {
+    "EASY": "Easy",
+    "MEDIUM": "Medium",
+    "HARD": "Hard"
+  },
+  "taskTypeLabels": {
+    "LEARNING": "Learning",
+    "CODING": "Coding",
+    "PROBLEM_SOLVING": "Problem Solving",
+    "RESEARCH": "Research",
+    "PROJECT": "Project"
+  },
+  "resourceTypeLabels": {
+    "DOCUMENTATION": "Documentation",
+    "ARTICLE": "Article",
+    "VIDEO": "Video",
+    "COURSE": "Course",
+    "BOOK": "Book",
+    "OTHER": "Other"
+  },
+  "table": {
+    "trainee": "Trainee",
+    "week": "Week",
+    "progress": "Progress",
+    "score": "Score",
+    "avgScore": "Avg Score",
+    "lastActivity": "Last Activity",
+    "status": "Status",
+    "dueDate": "Due",
+    "points": "Points",
+    "code": "Code",
+    "title": "Title",
+    "type": "Type",
+    "priority": "Priority",
+    "attempt": "Attempt",
+    "submitted": "Submitted",
+    "task": "Task",
+    "tasks": "Tasks"
+  },
+  "pagination": {
+    "pageOf": "Page {{page}} of {{totalPages}}",
+    "pageOfWithTotal": "Page {{page}} of {{totalPages}} ({{total}} {{label}})"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "loading": "Loading...",
+    "empty": "No notifications"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "goHome": "Go home"
   },
   "app": {
     "name": "Training Platform"

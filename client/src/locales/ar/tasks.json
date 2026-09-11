@@ -1,0 +1,43 @@
+{
+  "trainer": {
+    "title": "المهام",
+    "subtitle": "جميع مهام التعلّم عبر مناهج الاثني عشر أسبوعاً.",
+    "searchPlaceholder": "ابحث بالعنوان أو الرمز...",
+    "allTypes": "جميع الأنواع",
+    "noResults": "لم يتم العثور على مهام"
+  },
+  "trainee": {
+    "title": "مهامي",
+    "subtitle": "كل ما تم تكليفك به عبر البرنامج.",
+    "searchPlaceholder": "ابحث في المهام...",
+    "allStatuses": "جميع الحالات",
+    "noResults": "لم يتم العثور على مهام",
+    "due": "الموعد النهائي {{date}}"
+  },
+  "detail": {
+    "back": "العودة إلى مهامي",
+    "ptsSuffix": "نقطة",
+    "estimatedSuffix": "مقدّرة",
+    "due": "الموعد النهائي {{date}}",
+    "description": "الوصف",
+    "instructions": "التعليمات",
+    "acceptanceCriteria": "معايير القبول",
+    "submissionHistory": "سجل التسليمات",
+    "attempt": "المحاولة رقم {{number}}",
+    "submitted": "تم التسليم {{time}}",
+    "trainerFeedback": "ملاحظات المدرّب",
+    "scoreOutOf": "الدرجة: {{score}}/100",
+    "startTask": "ابدأ المهمة",
+    "submitWork": "إرسال العمل",
+    "updateSubmission": "تحديث التسليم",
+    "repositoryUrl": "رابط المستودع",
+    "branch": "الفرع",
+    "pullRequestUrl": "رابط طلب السحب",
+    "liveDemoUrl": "رابط العرض المباشر",
+    "notes": "ملاحظات",
+    "notesPlaceholder": "أي شيء يجب أن يعرفه المدرّب...",
+    "urlRequired": "أدخل رابط مستودع أو رابط طلب سحب على الأقل",
+    "submissionUpdated": "تم تحديث التسليم",
+    "submissionCreated": "تم إرسال العمل للمراجعة"
+  }
+}

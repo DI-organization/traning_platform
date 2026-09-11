@@ -1,0 +1,45 @@
+{
+  "list": {
+    "title": "المتدربون",
+    "subtitle": "إدارة حسابات المتدربين ومتابعة تقدمهم.",
+    "searchPlaceholder": "ابحث بالاسم أو البريد الإلكتروني...",
+    "allStatuses": "جميع الحالات",
+    "noResultsTitle": "لم يتم العثور على متدربين",
+    "noResultsDescription": "حاول تعديل البحث أو عوامل التصفية.",
+    "activated": "تم تفعيل المتدرب",
+    "deactivated": "تم إلغاء تفعيل المتدرب",
+    "paginationLabel": "متدربين"
+  },
+  "create": {
+    "trigger": "إضافة متدرب",
+    "title": "إنشاء حساب متدرب",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة مرور مؤقتة",
+    "phone": "رقم الهاتف (اختياري)",
+    "githubUsername": "اسم المستخدم على GitHub (اختياري)",
+    "submit": "إنشاء المتدرب",
+    "success": "تم إنشاء حساب المتدرب",
+    "error": "تعذّر إنشاء المتدرب",
+    "validation": {
+      "required": "حقل مطلوب",
+      "email": "أدخل بريداً إلكترونياً صحيحاً",
+      "password": "8 أحرف على الأقل"
+    }
+  },
+  "detail": {
+    "back": "العودة إلى المتدربين",
+    "currentWeek": "الأسبوع الحالي:",
+    "overallProgress": "التقدم الكلي",
+    "completed": "مكتمل",
+    "pending": "معلّق",
+    "overdue": "متأخر",
+    "avgScore": "متوسط الدرجة",
+    "tabSubmissions": "التسليمات والمراجعات",
+    "tabActivity": "سجل النشاط",
+    "noSubmissions": "لا توجد تسليمات بعد",
+    "noActivity": "لا يوجد نشاط بعد",
+    "loadError": "تعذّر تحميل بيانات هذا المتدرب."
+  }
+}

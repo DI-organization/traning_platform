@@ -1,0 +1,16 @@
+{
+  "trainer": {
+    "title": "Resources",
+    "subtitle": "Learning resources across the training program. Manage per-week from the program page.",
+    "allWeeks": "All weeks",
+    "allTypes": "All types",
+    "noResults": "No resources found"
+  },
+  "trainee": {
+    "title": "Resources",
+    "subtitle": "Learning material for the weeks you've unlocked so far.",
+    "allWeeks": "All weeks",
+    "allTypes": "All types",
+    "noResults": "No resources available yet"
+  }
+}

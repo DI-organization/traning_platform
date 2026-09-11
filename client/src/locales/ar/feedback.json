@@ -1,0 +1,15 @@
+{
+  "title": "الملاحظات والدرجات",
+  "subtitle": "ملاحظات المدرّب ودرجات التقييم لأعمالك.",
+  "overallPerformance": "الأداء العام",
+  "legend": "85-100 ممتاز · 75-84 جيد · 65-74 يحتاج تحسين · أقل من 65 يتطلب تحسيناً",
+  "levels": {
+    "excellent": "ممتاز",
+    "good": "جيد",
+    "needsImprovement": "يحتاج تحسين",
+    "improvementRequired": "يتطلب تحسيناً"
+  },
+  "reviewedSubmissions": "التسليمات التي تمت مراجعتها",
+  "noFeedbackTitle": "لا توجد ملاحظات بعد",
+  "noFeedbackDescription": "بمجرد أن يراجع المدرّب عملك، ستظهر الملاحظات هنا."
+}

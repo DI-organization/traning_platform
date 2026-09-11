@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,44 +10,45 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useMyProfile } from "@/hooks/useTrainees";
 import { formatDate } from "@/lib/format";
 
-function performanceLevel(score: number) {
-  if (score >= 85) return { label: "Excellent", variant: "success" as const };
-  if (score >= 75) return { label: "Good", variant: "default" as const };
-  if (score >= 65) return { label: "Needs Improvement", variant: "warning" as const };
-  return { label: "Improvement Required", variant: "destructive" as const };
+function performanceLevel(score: number, t: TFunction) {
+  if (score >= 85) return { label: t("feedback:levels.excellent"), variant: "success" as const };
+  if (score >= 75) return { label: t("feedback:levels.good"), variant: "default" as const };
+  if (score >= 65) return { label: t("feedback:levels.needsImprovement"), variant: "warning" as const };
+  return { label: t("feedback:levels.improvementRequired"), variant: "destructive" as const };
 }
 
 export default function TraineeFeedbackPage() {
+  const { t } = useTranslation(["feedback", "tasks", "common"]);
   const { data: profile, isLoading, isError, refetch } = useMyProfile();
 
   if (isLoading) return <Skeleton className="h-96 w-full" />;
   if (isError || !profile) return <ErrorState onRetry={() => refetch()} />;
 
-  const level = performanceLevel(profile.averageScore);
+  const level = performanceLevel(profile.averageScore, t);
   const reviewed = profile.submissions.filter((s) => s.reviews && s.reviews.length > 0);
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Feedback & Scores" description="Trainer feedback and evaluation scores for your work." />
+      <PageHeader title={t("feedback:title")} description={t("feedback:subtitle")} />
 
       <Card>
-        <CardHeader><CardTitle>Overall Performance</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("feedback:overallPerformance")}</CardTitle></CardHeader>
         <CardContent className="flex items-center gap-6">
           <div>
             <p className="text-4xl font-bold">{profile.averageScore}<span className="text-lg font-normal text-muted-foreground">/100</span></p>
             <Badge variant={level.variant} className="mt-2">{level.label}</Badge>
           </div>
           <div className="flex-1 text-sm text-muted-foreground">
-            <p>85-100 Excellent · 75-84 Good · 65-74 Needs Improvement · Below 65 Improvement Required</p>
+            <p>{t("feedback:legend")}</p>
           </div>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Reviewed Submissions</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("feedback:reviewedSubmissions")}</CardTitle></CardHeader>
         <CardContent>
           {reviewed.length === 0 ? (
-            <EmptyState className="border-0" title="No feedback yet" description="Once a trainer reviews your work, feedback will appear here." />
+            <EmptyState className="border-0" title={t("feedback:noFeedbackTitle")} description={t("feedback:noFeedbackDescription")} />
           ) : (
             <div className="space-y-4">
               {reviewed.map((s) => (
@@ -56,7 +59,7 @@ export default function TraineeFeedbackPage() {
                       <span className="font-medium">{s.task?.title}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      {s.evaluation && <Badge variant="secondary">{s.evaluation.totalScore} pts</Badge>}
+                      {s.evaluation && <Badge variant="secondary">{s.evaluation.totalScore} {t("tasks:detail.ptsSuffix")}</Badge>}
                       <StatusBadge status={s.reviews![0].decision} />
                     </div>
                   </div>

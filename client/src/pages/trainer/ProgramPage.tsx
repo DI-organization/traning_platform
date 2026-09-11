@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { Lock, LockOpen, Plus, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
@@ -28,6 +29,7 @@ const weekSchema = z.object({
 type WeekFormValues = z.infer<typeof weekSchema>;
 
 export default function TrainerProgramPage() {
+  const { t } = useTranslation(["program", "common"]);
   const { data: programs, isLoading: programsLoading, isError: programsError } = usePrograms();
   const programId = programs?.[0]?.id;
   const { data: program, isLoading: programLoading, isError: programError, refetch } = useProgram(programId);
@@ -55,7 +57,7 @@ export default function TrainerProgramPage() {
   }
 
   if (isError || !program) {
-    return <ErrorState onRetry={() => refetch()} title="No training program found" />;
+    return <ErrorState onRetry={() => refetch()} title={t("program:trainer.noProgramFound")} />;
   }
 
   const weeks = [...(program.weeks ?? [])].sort((a, b) => a.weekNumber - b.weekNumber);
@@ -65,12 +67,12 @@ export default function TrainerProgramPage() {
       { ...values, objectives: [], submissionRequirements: [] },
       {
         onSuccess: () => {
-          toast.success(`Week ${values.weekNumber} created`);
+          toast.success(t("program:trainer.weekCreated", { number: values.weekNumber }));
           reset();
           setCreateOpen(false);
           refetch();
         },
-        onError: (error) => toast.error(getErrorMessage(error, "Could not create week")),
+        onError: (error) => toast.error(getErrorMessage(error, t("program:trainer.weekCreateError"))),
       }
     );
   };
@@ -79,41 +81,45 @@ export default function TrainerProgramPage() {
     <div className="space-y-6">
       <PageHeader
         title={program.title}
-        description={`${weeks.length} of ${program.totalWeeks} weeks configured · Unlock strategy: ${program.weekUnlockStrategy === "MANUAL" ? "Manual" : "Automatic by date"}`}
+        description={t("program:trainer.weeksConfigured", {
+          count: weeks.length,
+          total: program.totalWeeks,
+          strategy: program.weekUnlockStrategy === "MANUAL" ? t("program:trainer.strategyManual") : t("program:trainer.strategyAutomatic"),
+        })}
         actions={
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
             <DialogTrigger asChild>
               <Button>
-                <Plus className="h-4 w-4" /> Add Week
+                <Plus className="h-4 w-4" /> {t("program:trainer.addWeek")}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Add a new week</DialogTitle>
+                <DialogTitle>{t("program:trainer.addWeekTitle")}</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
                 <div className="space-y-1.5">
-                  <Label htmlFor="weekNumber">Week number</Label>
+                  <Label htmlFor="weekNumber">{t("program:trainer.weekNumber")}</Label>
                   <Input id="weekNumber" type="number" {...register("weekNumber")} />
                   {errors.weekNumber && <p className="text-xs text-destructive">{errors.weekNumber.message}</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="title">Title</Label>
+                  <Label htmlFor="title">{t("program:trainer.title")}</Label>
                   <Input id="title" {...register("title")} />
                   {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description">{t("program:trainer.description")}</Label>
                   <Textarea id="description" rows={3} {...register("description")} />
                   {errors.description && <p className="text-xs text-destructive">{errors.description.message}</p>}
                 </div>
                 <DialogFooter>
                   <Button type="button" variant="outline" onClick={() => setCreateOpen(false)}>
-                    Cancel
+                    {t("common:actions.cancel")}
                   </Button>
                   <Button type="submit" disabled={createWeek.isPending}>
                     {createWeek.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-                    Create week
+                    {t("program:trainer.createWeek")}
                   </Button>
                 </DialogFooter>
               </form>
@@ -123,14 +129,14 @@ export default function TrainerProgramPage() {
       />
 
       {weeks.length === 0 ? (
-        <EmptyState title="No weeks yet" description="Add the first week to start building the curriculum." />
+        <EmptyState title={t("program:trainer.noWeeksTitle")} description={t("program:trainer.noWeeksDescription")} />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {weeks.map((week) => (
             <Card key={week.id} className="flex flex-col">
               <CardContent className="flex flex-1 flex-col gap-3 p-5">
                 <div className="flex items-start justify-between">
-                  <Badge variant="outline">Week {week.weekNumber}</Badge>
+                  <Badge variant="outline">{t("common:table.week")} {week.weekNumber}</Badge>
                   {week.isLocked ? <Lock className="h-4 w-4 text-muted-foreground" /> : <LockOpen className="h-4 w-4 text-success" />}
                 </div>
                 <div className="flex-1">
@@ -140,7 +146,7 @@ export default function TrainerProgramPage() {
                   <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{week.description}</p>
                 </div>
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>{week.tasks?.length ?? 0} tasks · {week.resources?.length ?? 0} resources</span>
+                  <span>{t("program:trainer.taskResourceCount", { tasks: week.tasks?.length ?? 0, resources: week.resources?.length ?? 0 })}</span>
                 </div>
                 <div className="flex items-center justify-between border-t pt-3">
                   <div className="flex items-center gap-2">
@@ -150,16 +156,16 @@ export default function TrainerProgramPage() {
                         setWeekLock.mutate(
                           { weekId: week.id, isLocked: !checked },
                           {
-                            onSuccess: () => toast.success(checked ? "Week unlocked" : "Week locked"),
+                            onSuccess: () => toast.success(checked ? t("program:trainer.weekUnlocked") : t("program:trainer.weekLocked")),
                             onError: (error) => toast.error(getErrorMessage(error)),
                           }
                         )
                       }
                     />
-                    <span className="text-xs text-muted-foreground">{week.isLocked ? "Locked" : "Unlocked"}</span>
+                    <span className="text-xs text-muted-foreground">{week.isLocked ? t("common:status.locked") : t("common:status.unlocked")}</span>
                   </div>
                   <Button variant="ghost" size="sm" asChild>
-                    <Link to={`/trainer/program/weeks/${week.id}`}>Manage</Link>
+                    <Link to={`/trainer/program/weeks/${week.id}`}>{t("common:actions.manage")}</Link>
                   </Button>
                 </div>
               </CardContent>

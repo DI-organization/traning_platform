@@ -1,0 +1,23 @@
+{
+  "title": "Analytics",
+  "subtitle": "Program-wide performance and progress insights.",
+  "kpi": {
+    "completionRate": "Completion Rate",
+    "averageScore": "Average Score",
+    "tasksOverdue": "Tasks Overdue",
+    "awaitingReview": "Awaiting Review"
+  },
+  "charts": {
+    "weeklyCompletion": "Weekly Completion",
+    "scoreDistribution": "Score Distribution",
+    "taskStatusDistribution": "Task Status Distribution",
+    "scoreByDifficulty": "Average Score by Task Difficulty"
+  },
+  "scoreBuckets": {
+    "excellent": "Excellent (85-100)",
+    "good": "Good (75-84)",
+    "needsImprovement": "Needs Improvement (65-74)",
+    "improvementRequired": "Improvement Required (<65)"
+  },
+  "traineeComparison": "Trainee Comparison"
+}

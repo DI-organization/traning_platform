@@ -1,0 +1,15 @@
+{
+  "title": "Feedback & Scores",
+  "subtitle": "Trainer feedback and evaluation scores for your work.",
+  "overallPerformance": "Overall Performance",
+  "legend": "85-100 Excellent · 75-84 Good · 65-74 Needs Improvement · Below 65 Improvement Required",
+  "levels": {
+    "excellent": "Excellent",
+    "good": "Good",
+    "needsImprovement": "Needs Improvement",
+    "improvementRequired": "Improvement Required"
+  },
+  "reviewedSubmissions": "Reviewed Submissions",
+  "noFeedbackTitle": "No feedback yet",
+  "noFeedbackDescription": "Once a trainer reviews your work, feedback will appear here."
+}

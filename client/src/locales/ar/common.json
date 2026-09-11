@@ -1,13 +1,17 @@
 {
   "actions": {
     "save": "حفظ",
+    "saveChanges": "حفظ التغييرات",
     "cancel": "إلغاء",
     "edit": "تعديل",
     "delete": "حذف",
     "create": "إنشاء",
+    "add": "إضافة",
     "search": "بحث",
     "filter": "تصفية",
     "viewDetails": "عرض التفاصيل",
+    "viewAll": "عرض الكل",
+    "manage": "إدارة",
     "submit": "إرسال",
     "update": "تحديث",
     "approve": "قبول",
@@ -26,7 +30,83 @@
     "error": "حدث خطأ ما",
     "empty": "لا يوجد شيء هنا بعد",
     "active": "نشط",
-    "inactive": "غير نشط"
+    "inactive": "غير نشط",
+    "required": "مطلوب",
+    "optional": "اختياري",
+    "locked": "مغلق",
+    "unlocked": "مفتوح"
+  },
+  "statusLabels": {
+    "NOT_STARTED": "لم يبدأ",
+    "IN_PROGRESS": "قيد التنفيذ",
+    "SUBMITTED": "تم التسليم",
+    "UNDER_REVIEW": "قيد المراجعة",
+    "CHANGES_REQUESTED": "مطلوب تعديلات",
+    "APPROVED": "مقبول",
+    "OVERDUE": "متأخر",
+    "ACTIVE": "نشط",
+    "INACTIVE": "غير نشط",
+    "PAUSED": "متوقف مؤقتاً",
+    "COMPLETED": "مكتمل",
+    "WITHDRAWN": "منسحب"
+  },
+  "priorityLabels": {
+    "LOW": "منخفضة",
+    "MEDIUM": "متوسطة",
+    "HIGH": "عالية",
+    "URGENT": "عاجلة"
+  },
+  "difficultyLabels": {
+    "EASY": "سهل",
+    "MEDIUM": "متوسط",
+    "HARD": "صعب"
+  },
+  "taskTypeLabels": {
+    "LEARNING": "تعلم",
+    "CODING": "برمجة",
+    "PROBLEM_SOLVING": "حل مشكلات",
+    "RESEARCH": "بحث",
+    "PROJECT": "مشروع"
+  },
+  "resourceTypeLabels": {
+    "DOCUMENTATION": "توثيق",
+    "ARTICLE": "مقالة",
+    "VIDEO": "فيديو",
+    "COURSE": "دورة",
+    "BOOK": "كتاب",
+    "OTHER": "أخرى"
+  },
+  "table": {
+    "trainee": "المتدرب",
+    "week": "الأسبوع",
+    "progress": "التقدم",
+    "score": "الدرجة",
+    "avgScore": "متوسط الدرجة",
+    "lastActivity": "آخر نشاط",
+    "status": "الحالة",
+    "dueDate": "الموعد النهائي",
+    "points": "النقاط",
+    "code": "الرمز",
+    "title": "العنوان",
+    "type": "النوع",
+    "priority": "الأولوية",
+    "attempt": "المحاولة",
+    "submitted": "تاريخ التسليم",
+    "task": "المهمة",
+    "tasks": "المهام"
+  },
+  "pagination": {
+    "pageOf": "صفحة {{page}} من {{totalPages}}",
+    "pageOfWithTotal": "صفحة {{page}} من {{totalPages}} ({{total}} {{label}})"
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "loading": "جارٍ التحميل...",
+    "empty": "لا توجد إشعارات"
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "goHome": "العودة للرئيسية"
   },
   "app": {
     "name": "منصة التدريب"

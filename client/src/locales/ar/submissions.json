@@ -1,0 +1,56 @@
+{
+  "trainer": {
+    "title": "التسليمات",
+    "subtitle": "راجع أعمال المتدربين والتسليمات المرتبطة بـ GitHub.",
+    "allStatuses": "جميع الحالات",
+    "noResults": "لم يتم العثور على تسليمات"
+  },
+  "trainee": {
+    "title": "تسليماتي",
+    "subtitle": "تسليماتك للمهام وحالة مراجعتها.",
+    "allStatuses": "جميع الحالات",
+    "noResultsTitle": "لا توجد تسليمات بعد",
+    "noResultsDescription": "أرسل مهمتك الأولى لتظهر هنا.",
+    "attempt": "المحاولة رقم {{number}}"
+  },
+  "detail": {
+    "back": "العودة إلى التسليمات",
+    "attemptSubmitted": "المحاولة رقم {{number}} · تم التسليم {{time}}",
+    "submissionCard": "التسليم",
+    "repository": "المستودع",
+    "branch": "الفرع",
+    "pullRequest": "طلب السحب",
+    "liveDemo": "العرض المباشر",
+    "notes": "ملاحظات",
+    "githubMetadata": "بيانات GitHub",
+    "refetch": "إعادة الجلب",
+    "repoUnavailable": "بيانات GitHub غير متوفرة ({{status}}). هذا لا يمنع المراجعة.",
+    "prUnavailable": "بيانات طلب السحب غير متوفرة ({{status}}).",
+    "taskRequirements": "متطلبات المهمة",
+    "instructions": "التعليمات",
+    "acceptanceCriteria": "معايير القبول",
+    "previousReviews": "المراجعات السابقة",
+    "score": "الدرجة",
+    "reviewThisSubmission": "مراجعة هذا التسليم",
+    "feedback": "الملاحظات",
+    "feedbackPlaceholder": "اترك ملاحظاتك للمتدرب...",
+    "scoresOptional": "الدرجات (اختياري، 0-100)",
+    "scoreFields": {
+      "taskCompletion": "إنجاز المهمة",
+      "functionality": "الوظائف",
+      "codeQuality": "جودة الكود",
+      "architecture": "البنية",
+      "gitUsage": "استخدام Git",
+      "problemSolving": "حل المشكلات",
+      "documentation": "التوثيق",
+      "testing": "الاختبار",
+      "technicalUnderstanding": "الفهم التقني"
+    },
+    "approve": "قبول",
+    "requestChanges": "طلب تعديلات",
+    "alreadyReviewed": "تمت مراجعة هذا التسليم مسبقاً ({{status}}).",
+    "approved": "تم قبول التسليم",
+    "changesRequested": "تم طلب تعديلات",
+    "feedbackRequired": "الملاحظات مطلوبة"
+  }
+}

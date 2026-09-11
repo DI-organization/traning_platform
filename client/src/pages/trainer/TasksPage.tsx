@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Search } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,6 +19,7 @@ import type { TaskType } from "@/types";
 const TASK_TYPES: TaskType[] = ["LEARNING", "CODING", "PROBLEM_SOLVING", "RESEARCH", "PROJECT"];
 
 export default function TrainerTasksPage() {
+  const { t } = useTranslation(["tasks", "common"]);
   const [search, setSearch] = useState("");
   const [type, setType] = useState<string>("all");
   const [page, setPage] = useState(1);
@@ -31,19 +33,19 @@ export default function TrainerTasksPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Tasks" description="All learning tasks across the 12-week curriculum." />
+      <PageHeader title={t("tasks:trainer.title")} description={t("tasks:trainer.subtitle")} />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1 sm:max-w-xs">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search by title or code..." className="pl-8" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
+          <Input placeholder={t("tasks:trainer.searchPlaceholder")} className="pl-8" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
         </div>
         <Select value={type} onValueChange={(v) => { setType(v); setPage(1); }}>
           <SelectTrigger className="w-full sm:w-48"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All types</SelectItem>
-            {TASK_TYPES.map((t) => (
-              <SelectItem key={t} value={t}>{t.replace("_", " ")}</SelectItem>
+            <SelectItem value="all">{t("tasks:trainer.allTypes")}</SelectItem>
+            {TASK_TYPES.map((ty) => (
+              <SelectItem key={ty} value={ty}>{t(`common:taskTypeLabels.${ty}`)}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -56,18 +58,18 @@ export default function TrainerTasksPage() {
           ) : isLoading ? (
             <div className="p-5"><TableSkeleton rows={8} cols={6} /></div>
           ) : !data || data.items.length === 0 ? (
-            <EmptyState className="border-0" title="No tasks found" />
+            <EmptyState className="border-0" title={t("tasks:trainer.noResults")} />
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Week</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Points</TableHead>
-                  <TableHead>Due</TableHead>
+                  <TableHead>{t("common:table.code")}</TableHead>
+                  <TableHead>{t("common:table.title")}</TableHead>
+                  <TableHead>{t("common:table.week")}</TableHead>
+                  <TableHead>{t("common:table.type")}</TableHead>
+                  <TableHead>{t("common:table.priority")}</TableHead>
+                  <TableHead>{t("common:table.points")}</TableHead>
+                  <TableHead>{t("common:table.dueDate")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -83,8 +85,8 @@ export default function TrainerTasksPage() {
                         task.title
                       )}
                     </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">Week {task.week?.weekNumber}</TableCell>
-                    <TableCell><Badge variant="outline">{task.type.replace("_", " ")}</Badge></TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{t("common:table.week")} {task.week?.weekNumber}</TableCell>
+                    <TableCell><Badge variant="outline">{t(`common:taskTypeLabels.${task.type}`)}</Badge></TableCell>
                     <TableCell><PriorityBadge priority={task.priority} /></TableCell>
                     <TableCell>{task.points}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">{formatDate(task.dueDate)}</TableCell>
@@ -98,10 +100,10 @@ export default function TrainerTasksPage() {
 
       {data && data.pagination.totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>Page {data.pagination.page} of {data.pagination.totalPages}</span>
+          <span>{t("common:pagination.pageOf", { page: data.pagination.page, totalPages: data.pagination.totalPages })}</span>
           <div className="flex gap-2">
-            <button className="rounded-md border px-3 py-1 disabled:opacity-50" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>Previous</button>
-            <button className="rounded-md border px-3 py-1 disabled:opacity-50" disabled={page >= data.pagination.totalPages} onClick={() => setPage((p) => p + 1)}>Next</button>
+            <button className="rounded-md border px-3 py-1 disabled:opacity-50" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>{t("common:actions.previous")}</button>
+            <button className="rounded-md border px-3 py-1 disabled:opacity-50" disabled={page >= data.pagination.totalPages} onClick={() => setPage((p) => p + 1)}>{t("common:actions.next")}</button>
           </div>
         </div>
       )}

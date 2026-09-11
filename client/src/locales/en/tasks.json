@@ -1,0 +1,43 @@
+{
+  "trainer": {
+    "title": "Tasks",
+    "subtitle": "All learning tasks across the 12-week curriculum.",
+    "searchPlaceholder": "Search by title or code...",
+    "allTypes": "All types",
+    "noResults": "No tasks found"
+  },
+  "trainee": {
+    "title": "My Tasks",
+    "subtitle": "Everything assigned to you across the program.",
+    "searchPlaceholder": "Search tasks...",
+    "allStatuses": "All statuses",
+    "noResults": "No tasks found",
+    "due": "Due {{date}}"
+  },
+  "detail": {
+    "back": "Back to my tasks",
+    "ptsSuffix": "pts",
+    "estimatedSuffix": "estimated",
+    "due": "Due {{date}}",
+    "description": "Description",
+    "instructions": "Instructions",
+    "acceptanceCriteria": "Acceptance Criteria",
+    "submissionHistory": "Submission History",
+    "attempt": "Attempt #{{number}}",
+    "submitted": "Submitted {{time}}",
+    "trainerFeedback": "Trainer feedback",
+    "scoreOutOf": "Score: {{score}}/100",
+    "startTask": "Start Task",
+    "submitWork": "Submit Work",
+    "updateSubmission": "Update Submission",
+    "repositoryUrl": "Repository URL",
+    "branch": "Branch",
+    "pullRequestUrl": "Pull Request URL",
+    "liveDemoUrl": "Live Demo URL",
+    "notes": "Notes",
+    "notesPlaceholder": "Anything the trainer should know...",
+    "urlRequired": "Provide at least a repository URL or a pull request URL",
+    "submissionUpdated": "Submission updated",
+    "submissionCreated": "Work submitted for review"
+  }
+}

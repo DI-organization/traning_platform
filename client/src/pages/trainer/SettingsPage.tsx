@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { Github, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,6 +20,7 @@ import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import type { WeekUnlockStrategy } from "@/types";
 
 export default function TrainerSettingsPage() {
+  const { t } = useTranslation(["settings", "common"]);
   const user = useAuthStore((s) => s.user);
   const setUser = useAuthStore((s) => s.setUser);
   const updateProfile = useUpdateMyProfile();
@@ -31,7 +33,7 @@ export default function TrainerSettingsPage() {
     updateProfile.mutate(values, {
       onSuccess: (updated) => {
         setUser(updated);
-        toast.success("Profile updated");
+        toast.success(t("settings:profile.updated"));
       },
       onError: (error) => toast.error(getErrorMessage(error)),
     });
@@ -39,42 +41,42 @@ export default function TrainerSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Settings" description="Manage your profile, program configuration and preferences." />
+      <PageHeader title={t("settings:title")} description={t("settings:subtitle")} />
 
       <Tabs defaultValue="profile">
         <TabsList>
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="program">Program</TabsTrigger>
-          <TabsTrigger value="integrations">GitHub Integration</TabsTrigger>
-          <TabsTrigger value="language">Language</TabsTrigger>
+          <TabsTrigger value="profile">{t("settings:tabs.profile")}</TabsTrigger>
+          <TabsTrigger value="program">{t("settings:tabs.program")}</TabsTrigger>
+          <TabsTrigger value="integrations">{t("settings:tabs.integrations")}</TabsTrigger>
+          <TabsTrigger value="language">{t("settings:tabs.language")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile">
           <Card>
-            <CardHeader><CardTitle>Profile</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t("settings:tabs.profile")}</CardTitle></CardHeader>
             <CardContent>
               <form onSubmit={onSaveProfile} className="max-w-md space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label>First name</Label>
+                    <Label>{t("settings:profile.firstName")}</Label>
                     <Input {...register("firstName")} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label>Last name</Label>
+                    <Label>{t("settings:profile.lastName")}</Label>
                     <Input {...register("lastName")} />
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Email</Label>
+                  <Label>{t("settings:profile.email")}</Label>
                   <Input value={user?.email ?? ""} disabled />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Phone</Label>
+                  <Label>{t("settings:profile.phone")}</Label>
                   <Input {...register("phone")} />
                 </div>
                 <Button type="submit" disabled={updateProfile.isPending}>
                   {updateProfile.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Save changes
+                  {t("settings:profile.saveChanges")}
                 </Button>
               </form>
             </CardContent>
@@ -88,23 +90,18 @@ export default function TrainerSettingsPage() {
         <TabsContent value="integrations">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Github className="h-4 w-4" /> GitHub Integration</CardTitle>
-              <CardDescription>
-                Repository and pull request metadata is fetched from the public GitHub API when a trainee submits work.
-                An optional <code className="rounded bg-muted px-1">GITHUB_TOKEN</code> can be set on the server to raise
-                rate limits — it is never required for basic use, and GitHub outages never block submissions.
-              </CardDescription>
+              <CardTitle className="flex items-center gap-2"><Github className="h-4 w-4" /> {t("settings:integrations.title")}</CardTitle>
+              <CardDescription>{t("settings:integrations.description")}</CardDescription>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
-              OAuth-based private repository access, webhooks and automatic PR status updates are supported by the
-              architecture and can be added later without a rewrite (see the GitHub service on the backend).
+              {t("settings:integrations.note")}
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="language">
           <Card>
-            <CardHeader><CardTitle>Language</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t("settings:tabs.language")}</CardTitle></CardHeader>
             <CardContent>
               <LanguageSwitcher />
             </CardContent>
@@ -116,6 +113,7 @@ export default function TrainerSettingsPage() {
 }
 
 function ProgramSettingsCard() {
+  const { t } = useTranslation(["settings", "common"]);
   const { data: programs, isLoading } = usePrograms();
   const program = programs?.[0];
   const updateProgram = useUpdateProgram();
@@ -135,21 +133,21 @@ function ProgramSettingsCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Program Settings</CardTitle>
+        <CardTitle>{t("settings:program.title")}</CardTitle>
         <CardDescription>{program.title}</CardDescription>
       </CardHeader>
       <CardContent className="max-w-xl space-y-4">
         <div className="space-y-1.5">
-          <Label>Description</Label>
+          <Label>{t("settings:program.description")}</Label>
           <Textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
         <div className="space-y-1.5">
-          <Label>Week unlock strategy</Label>
+          <Label>{t("settings:program.unlockStrategy")}</Label>
           <Select value={strategy} onValueChange={(v) => setStrategy(v as WeekUnlockStrategy)}>
             <SelectTrigger className="w-64"><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="MANUAL">Manual — trainer unlocks each week</SelectItem>
-              <SelectItem value="AUTOMATIC_BY_DATE">Automatic — unlock by start date</SelectItem>
+              <SelectItem value="MANUAL">{t("settings:program.strategyManual")}</SelectItem>
+              <SelectItem value="AUTOMATIC_BY_DATE">{t("settings:program.strategyAutomatic")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -158,7 +156,7 @@ function ProgramSettingsCard() {
             updateProgram.mutate(
               { id: program.id, input: { description, weekUnlockStrategy: strategy } },
               {
-                onSuccess: () => toast.success("Program settings saved"),
+                onSuccess: () => toast.success(t("settings:program.saved")),
                 onError: (error) => toast.error(getErrorMessage(error)),
               }
             )
@@ -166,7 +164,7 @@ function ProgramSettingsCard() {
           disabled={updateProgram.isPending}
         >
           {updateProgram.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-          Save program settings
+          {t("settings:program.save")}
         </Button>
       </CardContent>
     </Card>

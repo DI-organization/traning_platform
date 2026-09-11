@@ -1,0 +1,23 @@
+{
+  "title": "التحليلات",
+  "subtitle": "رؤى حول الأداء والتقدم على مستوى البرنامج.",
+  "kpi": {
+    "completionRate": "نسبة الإنجاز",
+    "averageScore": "متوسط الدرجات",
+    "tasksOverdue": "المهام المتأخرة",
+    "awaitingReview": "بانتظار المراجعة"
+  },
+  "charts": {
+    "weeklyCompletion": "الإنجاز الأسبوعي",
+    "scoreDistribution": "توزيع الدرجات",
+    "taskStatusDistribution": "توزيع حالات المهام",
+    "scoreByDifficulty": "متوسط الدرجة حسب صعوبة المهمة"
+  },
+  "scoreBuckets": {
+    "excellent": "ممتاز (85-100)",
+    "good": "جيد (75-84)",
+    "needsImprovement": "يحتاج تحسين (65-74)",
+    "improvementRequired": "يتطلب تحسيناً (أقل من 65)"
+  },
+  "traineeComparison": "مقارنة المتدربين"
+}

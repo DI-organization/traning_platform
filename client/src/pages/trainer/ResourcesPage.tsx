@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,6 +16,7 @@ import type { ResourceType } from "@/types";
 const TYPES: ResourceType[] = ["DOCUMENTATION", "ARTICLE", "VIDEO", "COURSE", "BOOK", "OTHER"];
 
 export default function TrainerResourcesPage() {
+  const { t } = useTranslation(["resources", "common"]);
   const { data: programs } = usePrograms();
   const programId = programs?.[0]?.id;
   const { data: program, isLoading, isError, refetch } = useProgram(programId);
@@ -35,24 +37,24 @@ export default function TrainerResourcesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Resources" description="Learning resources across the training program. Manage per-week from the program page." />
+      <PageHeader title={t("resources:trainer.title")} description={t("resources:trainer.subtitle")} />
 
       <div className="flex flex-col gap-3 sm:flex-row">
         <Select value={weekFilter} onValueChange={setWeekFilter}>
-          <SelectTrigger className="w-full sm:w-56"><SelectValue placeholder="All weeks" /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-56"><SelectValue placeholder={t("resources:trainer.allWeeks")} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All weeks</SelectItem>
+            <SelectItem value="all">{t("resources:trainer.allWeeks")}</SelectItem>
             {weeks.map((w) => (
-              <SelectItem key={w.id} value={w.id}>Week {w.weekNumber}: {w.title}</SelectItem>
+              <SelectItem key={w.id} value={w.id}>{t("common:table.week")} {w.weekNumber}: {w.title}</SelectItem>
             ))}
           </SelectContent>
         </Select>
         <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-full sm:w-48"><SelectValue placeholder="All types" /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-48"><SelectValue placeholder={t("resources:trainer.allTypes")} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All types</SelectItem>
-            {TYPES.map((t) => (
-              <SelectItem key={t} value={t}>{t}</SelectItem>
+            <SelectItem value="all">{t("resources:trainer.allTypes")}</SelectItem>
+            {TYPES.map((ty) => (
+              <SelectItem key={ty} value={ty}>{t(`common:resourceTypeLabels.${ty}`)}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -61,15 +63,15 @@ export default function TrainerResourcesPage() {
       <Card>
         <CardContent className="p-0">
           {resources.length === 0 ? (
-            <EmptyState className="border-0" title="No resources found" />
+            <EmptyState className="border-0" title={t("resources:trainer.noResults")} />
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Week</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Required</TableHead>
+                  <TableHead>{t("common:table.title")}</TableHead>
+                  <TableHead>{t("common:table.week")}</TableHead>
+                  <TableHead>{t("common:table.type")}</TableHead>
+                  <TableHead>{t("common:status.required")}</TableHead>
                   <TableHead />
                 </TableRow>
               </TableHeader>
@@ -84,13 +86,19 @@ export default function TrainerResourcesPage() {
                     </TableCell>
                     <TableCell>
                       <Link to={`/trainer/program/weeks/${r.week.id}`} className="text-xs text-muted-foreground hover:underline">
-                        Week {r.week.weekNumber}
+                        {t("common:table.week")} {r.week.weekNumber}
                       </Link>
                     </TableCell>
-                    <TableCell><Badge variant="outline">{r.type}</Badge></TableCell>
-                    <TableCell>{r.isRequired ? <Badge variant="warning">Required</Badge> : <span className="text-xs text-muted-foreground">Optional</span>}</TableCell>
+                    <TableCell><Badge variant="outline">{t(`common:resourceTypeLabels.${r.type}`)}</Badge></TableCell>
                     <TableCell>
-                      <Link to={`/trainer/program/weeks/${r.week.id}`} className="text-xs text-primary hover:underline">Manage</Link>
+                      {r.isRequired ? (
+                        <Badge variant="warning">{t("common:status.required")}</Badge>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">{t("common:status.optional")}</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Link to={`/trainer/program/weeks/${r.week.id}`} className="text-xs text-primary hover:underline">{t("common:actions.manage")}</Link>
                     </TableCell>
                   </TableRow>
                 ))}

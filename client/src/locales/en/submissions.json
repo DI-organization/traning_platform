@@ -1,0 +1,56 @@
+{
+  "trainer": {
+    "title": "Submissions",
+    "subtitle": "Review trainee work and GitHub-backed submissions.",
+    "allStatuses": "All statuses",
+    "noResults": "No submissions found"
+  },
+  "trainee": {
+    "title": "My Submissions",
+    "subtitle": "Your task submissions and their review status.",
+    "allStatuses": "All statuses",
+    "noResultsTitle": "No submissions yet",
+    "noResultsDescription": "Submit your first task to see it here.",
+    "attempt": "Attempt #{{number}}"
+  },
+  "detail": {
+    "back": "Back to submissions",
+    "attemptSubmitted": "Attempt #{{number}} · Submitted {{time}}",
+    "submissionCard": "Submission",
+    "repository": "Repository",
+    "branch": "Branch",
+    "pullRequest": "Pull Request",
+    "liveDemo": "Live Demo",
+    "notes": "Notes",
+    "githubMetadata": "GitHub Metadata",
+    "refetch": "Refetch",
+    "repoUnavailable": "GitHub metadata unavailable ({{status}}). This does not block review.",
+    "prUnavailable": "PR metadata unavailable ({{status}}).",
+    "taskRequirements": "Task Requirements",
+    "instructions": "Instructions",
+    "acceptanceCriteria": "Acceptance Criteria",
+    "previousReviews": "Previous Reviews",
+    "score": "Score",
+    "reviewThisSubmission": "Review this submission",
+    "feedback": "Feedback",
+    "feedbackPlaceholder": "Leave feedback for the trainee...",
+    "scoresOptional": "Scores (optional, 0-100)",
+    "scoreFields": {
+      "taskCompletion": "Task Completion",
+      "functionality": "Functionality",
+      "codeQuality": "Code Quality",
+      "architecture": "Architecture",
+      "gitUsage": "Git Usage",
+      "problemSolving": "Problem Solving",
+      "documentation": "Documentation",
+      "testing": "Testing",
+      "technicalUnderstanding": "Technical Understanding"
+    },
+    "approve": "Approve",
+    "requestChanges": "Request Changes",
+    "alreadyReviewed": "This submission has already been reviewed ({{status}}).",
+    "approved": "Submission approved",
+    "changesRequested": "Changes requested",
+    "feedbackRequired": "Feedback is required"
+  }
+}

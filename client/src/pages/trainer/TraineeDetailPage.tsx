@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Github, Mail, Phone, ArrowLeft } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,6 +16,7 @@ import { useTraineeDetail } from "@/hooks/useTrainees";
 import { formatDate, formatRelativeTime, initials } from "@/lib/format";
 
 export default function TraineeDetailPage() {
+  const { t } = useTranslation(["trainees", "common", "tasks"]);
   const { id } = useParams<{ id: string }>();
   const { data: trainee, isLoading, isError, refetch } = useTraineeDetail(id);
 
@@ -28,14 +30,14 @@ export default function TraineeDetailPage() {
   }
 
   if (isError || !trainee) {
-    return <ErrorState onRetry={() => refetch()} description="Could not load this trainee." />;
+    return <ErrorState onRetry={() => refetch()} description={t("trainees:detail.loadError")} />;
   }
 
   return (
     <div className="space-y-6">
       <Button variant="ghost" size="sm" asChild className="-ml-2">
         <Link to="/trainer/trainees">
-          <ArrowLeft className="h-4 w-4" /> Back to trainees
+          <ArrowLeft className="h-4 w-4" /> {t("trainees:detail.back")}
         </Link>
       </Button>
 
@@ -50,7 +52,9 @@ export default function TraineeDetailPage() {
               </Avatar>
               <div>
                 <p className="font-semibold">{trainee.firstName} {trainee.lastName}</p>
-                <Badge variant={trainee.isActive ? "success" : "secondary"}>{trainee.isActive ? "Active" : "Inactive"}</Badge>
+                <Badge variant={trainee.isActive ? "success" : "secondary"}>
+                  {trainee.isActive ? t("common:status.active") : t("common:status.inactive")}
+                </Badge>
               </div>
             </div>
             <div className="space-y-2 text-sm">
@@ -74,14 +78,14 @@ export default function TraineeDetailPage() {
               )}
             </div>
             <div className="border-t pt-3 text-sm text-muted-foreground">
-              Current Week: <span className="font-medium text-foreground">{trainee.enrollment?.currentWeek ?? "—"}</span>
+              {t("trainees:detail.currentWeek")} <span className="font-medium text-foreground">{trainee.enrollment?.currentWeek ?? "—"}</span>
             </div>
           </CardContent>
         </Card>
 
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Overall Progress</CardTitle>
+            <CardTitle>{t("trainees:detail.overallProgress")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-3">
@@ -89,10 +93,10 @@ export default function TraineeDetailPage() {
               <span className="text-sm font-medium">{trainee.overallProgress.progressPercent}%</span>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <Metric label="Completed" value={trainee.overallProgress.completedTasks} />
-              <Metric label="Pending" value={trainee.overallProgress.pendingTasks} />
-              <Metric label="Overdue" value={trainee.overallProgress.overdueTasks} tone="destructive" />
-              <Metric label="Avg Score" value={trainee.averageScore} tone="success" />
+              <Metric label={t("trainees:detail.completed")} value={trainee.overallProgress.completedTasks} />
+              <Metric label={t("trainees:detail.pending")} value={trainee.overallProgress.pendingTasks} />
+              <Metric label={t("trainees:detail.overdue")} value={trainee.overallProgress.overdueTasks} tone="destructive" />
+              <Metric label={t("trainees:detail.avgScore")} value={trainee.averageScore} tone="success" />
             </div>
           </CardContent>
         </Card>
@@ -100,15 +104,15 @@ export default function TraineeDetailPage() {
 
       <Tabs defaultValue="submissions">
         <TabsList>
-          <TabsTrigger value="submissions">Submissions & Reviews</TabsTrigger>
-          <TabsTrigger value="activity">Activity History</TabsTrigger>
+          <TabsTrigger value="submissions">{t("trainees:detail.tabSubmissions")}</TabsTrigger>
+          <TabsTrigger value="activity">{t("trainees:detail.tabActivity")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="submissions">
           <Card>
             <CardContent className="p-5">
               {trainee.submissions.length === 0 ? (
-                <EmptyState title="No submissions yet" className="border-0" />
+                <EmptyState title={t("trainees:detail.noSubmissions")} className="border-0" />
               ) : (
                 <div className="divide-y">
                   {trainee.submissions.map((s) => (
@@ -119,10 +123,10 @@ export default function TraineeDetailPage() {
                     >
                       <div>
                         <p className="text-sm font-medium">{s.task?.code} — {s.task?.title}</p>
-                        <p className="text-xs text-muted-foreground">Submitted {formatRelativeTime(s.submittedAt)}</p>
+                        <p className="text-xs text-muted-foreground">{t("common:table.submitted")} {formatRelativeTime(s.submittedAt)}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        {s.evaluation && <Badge variant="outline">{s.evaluation.totalScore} pts</Badge>}
+                        {s.evaluation && <Badge variant="outline">{s.evaluation.totalScore} {t("tasks:detail.ptsSuffix")}</Badge>}
                         <StatusBadge status={s.status} />
                       </div>
                     </Link>
@@ -137,7 +141,7 @@ export default function TraineeDetailPage() {
           <Card>
             <CardContent className="p-5">
               {trainee.activity.length === 0 ? (
-                <EmptyState title="No activity yet" className="border-0" />
+                <EmptyState title={t("trainees:detail.noActivity")} className="border-0" />
               ) : (
                 <div className="space-y-3">
                   {trainee.activity.map((a) => (

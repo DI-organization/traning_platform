@@ -1,0 +1,52 @@
+{
+  "trainer": {
+    "welcome": "Welcome back, {{name}}",
+    "subtitle": "Here's how the cohort is progressing this week.",
+    "kpi": {
+      "totalTrainees": "Total Trainees",
+      "activeTrainees": "Active Trainees",
+      "overallCompletion": "Overall Completion",
+      "averageScore": "Average Score",
+      "tasksCompleted": "Tasks Completed",
+      "tasksPending": "Tasks Pending",
+      "overdueTasks": "Overdue Tasks",
+      "pendingReviews": "Pending Reviews"
+    },
+    "traineeProgress": "Trainee Progress",
+    "noTrainees": "No trainees yet",
+    "noTraineesDescription": "Create a trainee account to get started.",
+    "pendingReviewsTitle": "Pending Reviews",
+    "allCaughtUp": "All caught up",
+    "noSubmissionsAwaiting": "No submissions awaiting review.",
+    "review": "Review",
+    "recentActivity": "Recent Activity",
+    "noRecentActivity": "No recent activity",
+    "loadError": "Could not load the dashboard."
+  },
+  "trainee": {
+    "welcome": "Welcome, {{name}}",
+    "weekProgress": "Week {{week}} of {{total}} — {{title}}",
+    "notEnrolled": "You are not enrolled in a program yet.",
+    "kpi": {
+      "overallProgress": "Overall Progress",
+      "averageScore": "Average Score",
+      "completedTasks": "Completed Tasks",
+      "pendingTasks": "Pending Tasks"
+    },
+    "continueLearning": "Continue Learning",
+    "viewWeek": "View week",
+    "allCaughtUp": "You're all caught up",
+    "noPendingTasks": "No pending tasks in your current week.",
+    "startWorking": "Start working",
+    "upcomingDeadlines": "Upcoming Deadlines",
+    "noUpcomingDeadlines": "No upcoming deadlines",
+    "latestFeedback": "Latest Feedback",
+    "noFeedbackYet": "No feedback yet",
+    "githubActivity": "GitHub Activity",
+    "noGithubLinked": "No GitHub account linked",
+    "noGithubLinkedDescription": "Add your GitHub username in your profile.",
+    "noRepoActivity": "No repository activity yet",
+    "unreadNotifications": "You have {{count}} unread notification — check the bell icon above.",
+    "unreadNotifications_plural": "You have {{count}} unread notifications — check the bell icon above."
+  }
+}

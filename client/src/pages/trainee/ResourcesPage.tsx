@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,6 +15,7 @@ import type { ResourceType } from "@/types";
 const TYPES: ResourceType[] = ["DOCUMENTATION", "ARTICLE", "VIDEO", "COURSE", "BOOK", "OTHER"];
 
 export default function TraineeResourcesPage() {
+  const { t } = useTranslation(["resources", "common"]);
   const { data: profile, isLoading: profileLoading, isError, refetch } = useMyProfile();
   const programId = profile?.enrollment?.program.id;
   const { data: program, isLoading: programLoading } = useProgram(programId);
@@ -37,24 +39,24 @@ export default function TraineeResourcesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Resources" description="Learning material for the weeks you've unlocked so far." />
+      <PageHeader title={t("resources:trainee.title")} description={t("resources:trainee.subtitle")} />
 
       <div className="flex flex-col gap-3 sm:flex-row">
         <Select value={weekFilter} onValueChange={setWeekFilter}>
-          <SelectTrigger className="w-full sm:w-56"><SelectValue placeholder="All weeks" /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-56"><SelectValue placeholder={t("resources:trainee.allWeeks")} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All weeks</SelectItem>
+            <SelectItem value="all">{t("resources:trainee.allWeeks")}</SelectItem>
             {weeks.map((w) => (
-              <SelectItem key={w.id} value={w.id}>Week {w.weekNumber}: {w.title}</SelectItem>
+              <SelectItem key={w.id} value={w.id}>{t("common:table.week")} {w.weekNumber}: {w.title}</SelectItem>
             ))}
           </SelectContent>
         </Select>
         <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-full sm:w-48"><SelectValue placeholder="All types" /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-48"><SelectValue placeholder={t("resources:trainee.allTypes")} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All types</SelectItem>
-            {TYPES.map((t) => (
-              <SelectItem key={t} value={t}>{t}</SelectItem>
+            <SelectItem value="all">{t("resources:trainee.allTypes")}</SelectItem>
+            {TYPES.map((ty) => (
+              <SelectItem key={ty} value={ty}>{t(`common:resourceTypeLabels.${ty}`)}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -63,7 +65,7 @@ export default function TraineeResourcesPage() {
       <Card>
         <CardContent className="p-0">
           {resources.length === 0 ? (
-            <EmptyState className="border-0" title="No resources available yet" />
+            <EmptyState className="border-0" title={t("resources:trainee.noResults")} />
           ) : (
             <div className="divide-y">
               {resources.map((r) => (
@@ -71,11 +73,11 @@ export default function TraineeResourcesPage() {
                   <div>
                     <p className="flex items-center gap-1 font-medium">{r.title} <ExternalLink className="h-3 w-3" /></p>
                     <p className="text-sm text-muted-foreground">{r.description}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Week {r.week.weekNumber}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{t("common:table.week")} {r.week.weekNumber}</p>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
-                    <Badge variant="outline">{r.type}</Badge>
-                    {r.isRequired && <Badge variant="warning">Required</Badge>}
+                    <Badge variant="outline">{t(`common:resourceTypeLabels.${r.type}`)}</Badge>
+                    {r.isRequired && <Badge variant="warning">{t("common:status.required")}</Badge>}
                   </div>
                 </a>
               ))}

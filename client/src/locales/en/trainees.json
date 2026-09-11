@@ -1,0 +1,45 @@
+{
+  "list": {
+    "title": "Trainees",
+    "subtitle": "Manage trainee accounts and monitor their progress.",
+    "searchPlaceholder": "Search by name or email...",
+    "allStatuses": "All statuses",
+    "noResultsTitle": "No trainees found",
+    "noResultsDescription": "Try adjusting your search or filters.",
+    "activated": "Trainee activated",
+    "deactivated": "Trainee deactivated",
+    "paginationLabel": "trainees"
+  },
+  "create": {
+    "trigger": "Add Trainee",
+    "title": "Create trainee account",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "password": "Temporary password",
+    "phone": "Phone (optional)",
+    "githubUsername": "GitHub username (optional)",
+    "submit": "Create trainee",
+    "success": "Trainee account created",
+    "error": "Could not create trainee",
+    "validation": {
+      "required": "Required",
+      "email": "Enter a valid email",
+      "password": "At least 8 characters"
+    }
+  },
+  "detail": {
+    "back": "Back to trainees",
+    "currentWeek": "Current Week:",
+    "overallProgress": "Overall Progress",
+    "completed": "Completed",
+    "pending": "Pending",
+    "overdue": "Overdue",
+    "avgScore": "Avg Score",
+    "tabSubmissions": "Submissions & Reviews",
+    "tabActivity": "Activity History",
+    "noSubmissions": "No submissions yet",
+    "noActivity": "No activity yet",
+    "loadError": "Could not load this trainee."
+  }
+}

@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Bell, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +13,7 @@ import { useMarkAllNotificationsRead, useMarkNotificationRead, useNotifications 
 import { cn } from "@/lib/utils";
 
 export function NotificationsDropdown() {
+  const { t } = useTranslation("common");
   const { data, isLoading } = useNotifications();
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
@@ -33,19 +35,19 @@ export function NotificationsDropdown() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80 p-0">
         <div className="flex items-center justify-between border-b px-3 py-2">
-          <span className="text-sm font-semibold">Notifications</span>
+          <span className="text-sm font-semibold">{t("notifications.title")}</span>
           {unreadCount > 0 && (
             <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={() => markAllRead.mutate()}>
               <CheckCheck className="h-3.5 w-3.5" />
-              Mark all read
+              {t("actions.markAllRead")}
             </Button>
           )}
         </div>
         <div className="max-h-96 overflow-y-auto scrollbar-thin">
           {isLoading ? (
-            <div className="p-4 text-sm text-muted-foreground">Loading...</div>
+            <div className="p-4 text-sm text-muted-foreground">{t("notifications.loading")}</div>
           ) : !data || data.notifications.length === 0 ? (
-            <EmptyState title="No notifications" className="border-0 py-8" />
+            <EmptyState title={t("notifications.empty")} className="border-0 py-8" />
           ) : (
             data.notifications.map((n) => (
               <button

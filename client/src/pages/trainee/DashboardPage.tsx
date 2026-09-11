@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { ArrowRight, BookOpen, CheckCircle2, Clock, Github, Star } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatCard } from "@/components/common/StatCard";
@@ -9,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/common/EmptyState";
 import { ErrorState } from "@/components/common/ErrorState";
 import { Skeleton } from "@/components/ui/skeleton";
-import { StatusBadge } from "@/components/common/StatusBadge";
+import { StatusBadge, PriorityBadge } from "@/components/common/StatusBadge";
 import { useAuthStore } from "@/store/authStore";
 import { useMyProfile } from "@/hooks/useTrainees";
 import { useProgram } from "@/hooks/usePrograms";
@@ -18,6 +19,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { formatDate, formatRelativeTime } from "@/lib/format";
 
 export default function TraineeDashboardPage() {
+  const { t } = useTranslation(["dashboard", "common"]);
   const user = useAuthStore((s) => s.user);
   const { data: profile, isLoading: profileLoading, isError, refetch } = useMyProfile();
   const programId = profile?.enrollment?.program.id;
@@ -31,13 +33,13 @@ export default function TraineeDashboardPage() {
 
   const { data: weekTasks } = useTasks({ weekId: currentWeek?.id, userId: user?.id, limit: 50 });
 
-  const nextTask = weekTasks?.items.find((t) => t.assignmentStatus === "NOT_STARTED" || t.assignmentStatus === "IN_PROGRESS");
+  const nextTask = weekTasks?.items.find((task) => task.assignmentStatus === "NOT_STARTED" || task.assignmentStatus === "IN_PROGRESS");
 
   const upcomingDeadlines = useMemo(() => {
     if (!weekTasks) return [];
     const now = Date.now();
     return weekTasks.items
-      .filter((t) => t.dueDate && new Date(t.dueDate).getTime() > now && t.assignmentStatus !== "APPROVED")
+      .filter((task) => task.dueDate && new Date(task.dueDate).getTime() > now && task.assignmentStatus !== "APPROVED")
       .sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime())
       .slice(0, 4);
   }, [weekTasks]);
@@ -60,30 +62,38 @@ export default function TraineeDashboardPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={`Welcome, ${user?.firstName}`}
-        description={profile.enrollment ? `Week ${profile.enrollment.currentWeek} of ${program?.totalWeeks ?? 12} — ${currentWeek?.title ?? ""}` : "You are not enrolled in a program yet."}
+        title={t("dashboard:trainee.welcome", { name: user?.firstName ?? "" })}
+        description={
+          profile.enrollment
+            ? t("dashboard:trainee.weekProgress", {
+                week: profile.enrollment.currentWeek,
+                total: program?.totalWeeks ?? 12,
+                title: currentWeek?.title ?? "",
+              })
+            : t("dashboard:trainee.notEnrolled")
+        }
       />
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatCard label="Overall Progress" value={`${profile.overallProgress.progressPercent}%`} icon={BookOpen} />
-        <StatCard label="Average Score" value={profile.averageScore} icon={Star} tone="success" />
-        <StatCard label="Completed Tasks" value={profile.overallProgress.completedTasks} icon={CheckCircle2} tone="success" />
-        <StatCard label="Pending Tasks" value={profile.overallProgress.pendingTasks} icon={Clock} tone="warning" />
+        <StatCard label={t("dashboard:trainee.kpi.overallProgress")} value={`${profile.overallProgress.progressPercent}%`} icon={BookOpen} />
+        <StatCard label={t("dashboard:trainee.kpi.averageScore")} value={profile.averageScore} icon={Star} tone="success" />
+        <StatCard label={t("dashboard:trainee.kpi.completedTasks")} value={profile.overallProgress.completedTasks} icon={CheckCircle2} tone="success" />
+        <StatCard label={t("dashboard:trainee.kpi.pendingTasks")} value={profile.overallProgress.pendingTasks} icon={Clock} tone="warning" />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Continue Learning</CardTitle>
+            <CardTitle>{t("dashboard:trainee.continueLearning")}</CardTitle>
             {currentWeek && (
               <Button variant="ghost" size="sm" asChild>
-                <Link to={`/trainee/program/weeks/${currentWeek.id}`}>View week <ArrowRight className="h-3.5 w-3.5" /></Link>
+                <Link to={`/trainee/program/weeks/${currentWeek.id}`}>{t("dashboard:trainee.viewWeek")} <ArrowRight className="h-3.5 w-3.5" /></Link>
               </Button>
             )}
           </CardHeader>
           <CardContent>
             {!nextTask ? (
-              <EmptyState className="border-0" title="You're all caught up" description="No pending tasks in your current week." />
+              <EmptyState className="border-0" title={t("dashboard:trainee.allCaughtUp")} description={t("dashboard:trainee.noPendingTasks")} />
             ) : (
               <Link to={`/trainee/tasks/${nextTask.id}`} className="block rounded-lg border p-4 hover:bg-accent">
                 <div className="mb-1 flex items-center gap-2">
@@ -93,7 +103,7 @@ export default function TraineeDashboardPage() {
                 <p className="font-medium">{nextTask.title}</p>
                 <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{nextTask.description}</p>
                 <div className="mt-2 flex items-center gap-1 text-sm font-medium text-primary">
-                  Start working <ArrowRight className="h-3.5 w-3.5" />
+                  {t("dashboard:trainee.startWorking")} <ArrowRight className="h-3.5 w-3.5" />
                 </div>
               </Link>
             )}
@@ -101,18 +111,18 @@ export default function TraineeDashboardPage() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>Upcoming Deadlines</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{t("dashboard:trainee.upcomingDeadlines")}</CardTitle></CardHeader>
           <CardContent className="space-y-3">
             {upcomingDeadlines.length === 0 ? (
-              <EmptyState className="border-0 py-8" title="No upcoming deadlines" />
+              <EmptyState className="border-0 py-8" title={t("dashboard:trainee.noUpcomingDeadlines")} />
             ) : (
-              upcomingDeadlines.map((t) => (
-                <Link key={t.id} to={`/trainee/tasks/${t.id}`} className="flex items-center justify-between rounded-md border p-2.5 text-sm hover:bg-accent">
+              upcomingDeadlines.map((task) => (
+                <Link key={task.id} to={`/trainee/tasks/${task.id}`} className="flex items-center justify-between rounded-md border p-2.5 text-sm hover:bg-accent">
                   <div>
-                    <p className="font-medium">{t.code}</p>
-                    <p className="text-xs text-muted-foreground">{formatDate(t.dueDate)}</p>
+                    <p className="font-medium">{task.code}</p>
+                    <p className="text-xs text-muted-foreground">{formatDate(task.dueDate)}</p>
                   </div>
-                  <Badge variant="outline">{t.priority}</Badge>
+                  <PriorityBadge priority={task.priority} />
                 </Link>
               ))
             )}
@@ -122,10 +132,10 @@ export default function TraineeDashboardPage() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader><CardTitle>Latest Feedback</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{t("dashboard:trainee.latestFeedback")}</CardTitle></CardHeader>
           <CardContent>
             {!latestFeedback || !latestFeedback.reviews?.length ? (
-              <EmptyState className="border-0 py-8" title="No feedback yet" />
+              <EmptyState className="border-0 py-8" title={t("dashboard:trainee.noFeedbackYet")} />
             ) : (
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
@@ -142,13 +152,13 @@ export default function TraineeDashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center gap-2">
             <Github className="h-4 w-4" />
-            <CardTitle>GitHub Activity</CardTitle>
+            <CardTitle>{t("dashboard:trainee.githubActivity")}</CardTitle>
           </CardHeader>
           <CardContent>
             {!profile.githubProfile ? (
-              <EmptyState className="border-0 py-8" title="No GitHub account linked" description="Add your GitHub username in your profile." />
+              <EmptyState className="border-0 py-8" title={t("dashboard:trainee.noGithubLinked")} description={t("dashboard:trainee.noGithubLinkedDescription")} />
             ) : profile.submissions.filter((s) => s.repositoryUrl).length === 0 ? (
-              <EmptyState className="border-0 py-8" title="No repository activity yet" />
+              <EmptyState className="border-0 py-8" title={t("dashboard:trainee.noRepoActivity")} />
             ) : (
               <div className="space-y-2">
                 {profile.submissions
@@ -174,7 +184,7 @@ export default function TraineeDashboardPage() {
 
       {notifData && notifData.unreadCount > 0 && (
         <p className="text-sm text-muted-foreground">
-          You have {notifData.unreadCount} unread notification{notifData.unreadCount > 1 ? "s" : ""} — check the bell icon above.
+          {t("dashboard:trainee.unreadNotifications", { count: notifData.unreadCount })}
         </p>
       )}
     </div>

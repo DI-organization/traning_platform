@@ -109,7 +109,7 @@ export function Sidebar({ role }: { role: Role }) {
           className="hidden items-center justify-center gap-2 border-t border-sidebar-border px-3 py-3 text-xs text-sidebar-foreground/70 hover:text-sidebar-foreground lg:flex"
         >
           {collapsed ? <ChevronsRight className="h-4 w-4" /> : <ChevronsLeft className="h-4 w-4" />}
-          {!collapsed && "Collapse"}
+          {!collapsed && t("nav:collapse")}
         </button>
       </aside>
     </>

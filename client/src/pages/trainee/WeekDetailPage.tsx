@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { ArrowLeft, ExternalLink, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +19,7 @@ import { useAuthStore } from "@/store/authStore";
 import { getErrorMessage } from "@/api/client";
 
 export default function TraineeWeekDetailPage() {
+  const { t } = useTranslation(["program", "common"]);
   const { weekId } = useParams<{ weekId: string }>();
   const user = useAuthStore((s) => s.user);
   const { data: week, isLoading, isError, refetch } = useWeek(weekId);
@@ -27,20 +29,20 @@ export default function TraineeWeekDetailPage() {
   if (isLoading) return <Skeleton className="h-96 w-full" />;
   if (isError || !week) return <ErrorState onRetry={() => refetch()} />;
 
-  const weeklyProjectTask = tasksData?.items.find((t) => t.isWeeklyProject);
-  const regularTasks = tasksData?.items.filter((t) => !t.isWeeklyProject) ?? [];
+  const weeklyProjectTask = tasksData?.items.find((task) => task.isWeeklyProject);
+  const regularTasks = tasksData?.items.filter((task) => !task.isWeeklyProject) ?? [];
 
   return (
     <div className="space-y-6">
       <Button variant="ghost" size="sm" asChild className="-ml-2">
-        <Link to="/trainee/program"><ArrowLeft className="h-4 w-4" /> Back to my program</Link>
+        <Link to="/trainee/program"><ArrowLeft className="h-4 w-4" /> {t("program:trainee.week.back")}</Link>
       </Button>
 
-      <PageHeader title={`Week ${week.weekNumber}: ${week.title}`} description={week.description} />
+      <PageHeader title={`${t("common:table.week")} ${week.weekNumber}: ${week.title}`} description={week.description} />
 
       {week.objectives.length > 0 && (
         <Card>
-          <CardHeader><CardTitle>Objectives</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{t("program:trainee.week.objectives")}</CardTitle></CardHeader>
           <CardContent>
             <ul className="list-inside list-disc space-y-1 text-sm text-muted-foreground">
               {week.objectives.map((o, i) => <li key={i}>{o}</li>)}
@@ -51,18 +53,18 @@ export default function TraineeWeekDetailPage() {
 
       {week.topics.length > 0 && (
         <Card>
-          <CardHeader><CardTitle>Topics</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{t("program:trainee.week.topics")}</CardTitle></CardHeader>
           <CardContent className="flex flex-wrap gap-2">
-            {week.topics.map((t) => <Badge key={t.id} variant="secondary">{t.title}</Badge>)}
+            {week.topics.map((topic) => <Badge key={topic.id} variant="secondary">{topic.title}</Badge>)}
           </CardContent>
         </Card>
       )}
 
       <Card>
-        <CardHeader><CardTitle>Resources</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("program:trainee.week.resources")}</CardTitle></CardHeader>
         <CardContent>
           {week.resources.length === 0 ? (
-            <EmptyState className="border-0" title="No resources yet" />
+            <EmptyState className="border-0" title={t("program:trainee.week.noResourcesYet")} />
           ) : (
             <div className="divide-y">
               {week.resources.map((r) => (
@@ -72,8 +74,8 @@ export default function TraineeWeekDetailPage() {
                     <p className="text-xs text-muted-foreground">{r.description}</p>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
-                    <Badge variant="outline">{r.type}</Badge>
-                    {r.isRequired && <Badge variant="warning">Required</Badge>}
+                    <Badge variant="outline">{t(`common:resourceTypeLabels.${r.type}`)}</Badge>
+                    {r.isRequired && <Badge variant="warning">{t("common:status.required")}</Badge>}
                   </div>
                 </a>
               ))}
@@ -83,22 +85,22 @@ export default function TraineeWeekDetailPage() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Tasks</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("program:trainee.week.tasks")}</CardTitle></CardHeader>
         <CardContent>
           {regularTasks.length === 0 ? (
-            <EmptyState className="border-0" title="No tasks yet" />
+            <EmptyState className="border-0" title={t("program:trainee.week.noTasksYet")} />
           ) : (
             <div className="divide-y">
-              {regularTasks.map((t) => (
-                <Link key={t.id} to={`/trainee/tasks/${t.id}`} className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0 hover:bg-accent/50">
+              {regularTasks.map((task) => (
+                <Link key={task.id} to={`/trainee/tasks/${task.id}`} className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0 hover:bg-accent/50">
                   <div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline">{t.code}</Badge>
-                      <PriorityBadge priority={t.priority} />
+                      <Badge variant="outline">{task.code}</Badge>
+                      <PriorityBadge priority={task.priority} />
                     </div>
-                    <p className="mt-1 font-medium">{t.title}</p>
+                    <p className="mt-1 font-medium">{task.title}</p>
                   </div>
-                  <StatusBadge status={t.assignmentStatus ?? "NOT_STARTED"} />
+                  <StatusBadge status={task.assignmentStatus ?? "NOT_STARTED"} />
                 </Link>
               ))}
             </div>
@@ -108,7 +110,7 @@ export default function TraineeWeekDetailPage() {
 
       {(week.weeklyProjectTitle || weeklyProjectTask) && (
         <Card className="border-primary/30">
-          <CardHeader><CardTitle>Weekly Project: {week.weeklyProjectTitle}</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{t("program:trainee.week.weeklyProject", { title: week.weeklyProjectTitle })}</CardTitle></CardHeader>
           <CardContent className="space-y-3">
             <p className="text-sm text-muted-foreground">{week.weeklyProjectDescription}</p>
             {week.submissionRequirements.length > 0 && (
@@ -118,7 +120,7 @@ export default function TraineeWeekDetailPage() {
             )}
             {weeklyProjectTask && (
               <Button asChild>
-                <Link to={`/trainee/tasks/${weeklyProjectTask.id}`}>Open project task</Link>
+                <Link to={`/trainee/tasks/${weeklyProjectTask.id}`}>{t("program:trainee.week.openProjectTask")}</Link>
               </Button>
             )}
           </CardContent>
@@ -127,7 +129,7 @@ export default function TraineeWeekDetailPage() {
 
       {week.researchQuestions.length > 0 && (
         <Card>
-          <CardHeader><CardTitle>Research Questions</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{t("program:trainee.week.researchQuestions")}</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             {week.researchQuestions.map((q) => (
               <ResearchQuestionItem key={q.id} question={q} existingAnswer={myAnswers?.find((a) => a.questionId === q.id)} />
@@ -146,6 +148,7 @@ function ResearchQuestionItem({
   question: import("@/types").ResearchQuestion;
   existingAnswer?: import("@/types").ResearchAnswer;
 }) {
+  const { t } = useTranslation(["program", "common"]);
   const [answer, setAnswer] = useState(existingAnswer?.answer ?? "");
   const [editing, setEditing] = useState(!existingAnswer);
   const submitAnswer = useAnswerResearchQuestion();
@@ -155,7 +158,7 @@ function ResearchQuestionItem({
       { questionId: question.id, answer },
       {
         onSuccess: () => {
-          toast.success("Answer submitted");
+          toast.success(t("program:trainee.week.answerSubmitted"));
           setEditing(false);
         },
         onError: (error) => toast.error(getErrorMessage(error)),
@@ -171,22 +174,24 @@ function ResearchQuestionItem({
           <p className="whitespace-pre-wrap rounded-md bg-muted p-3 text-sm">{existingAnswer.answer}</p>
           <div className="flex items-center gap-2">
             {existingAnswer.score != null ? (
-              <Badge variant="success">Score: {existingAnswer.score}</Badge>
+              <Badge variant="success">{t("program:trainee.week.scoreLabel", { score: existingAnswer.score })}</Badge>
             ) : (
-              <Badge variant="secondary">Awaiting review</Badge>
+              <Badge variant="secondary">{t("program:trainee.week.awaitingReview")}</Badge>
             )}
             {!existingAnswer.reviewedAt && (
-              <Button variant="ghost" size="sm" onClick={() => setEditing(true)}>Edit answer</Button>
+              <Button variant="ghost" size="sm" onClick={() => setEditing(true)}>{t("program:trainee.week.editAnswer")}</Button>
             )}
           </div>
-          {existingAnswer.feedback && <p className="text-sm text-muted-foreground">Feedback: {existingAnswer.feedback}</p>}
+          {existingAnswer.feedback && (
+            <p className="text-sm text-muted-foreground">{t("program:trainee.week.feedbackLabel", { feedback: existingAnswer.feedback })}</p>
+          )}
         </div>
       ) : (
         <div className="mt-2 space-y-2">
-          <Textarea rows={3} value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder="Write your answer..." />
+          <Textarea rows={3} value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder={t("program:trainee.week.answerPlaceholder")} />
           <Button size="sm" onClick={submit} disabled={!answer.trim() || submitAnswer.isPending}>
             {submitAnswer.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-            Submit answer
+            {t("program:trainee.week.submitAnswer")}
           </Button>
         </div>
       )}

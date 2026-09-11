@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { ArrowLeft, ExternalLink, Loader2, Plus, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,6 +35,7 @@ import { formatDate } from "@/lib/format";
 import type { ResourceType, TaskDifficulty, TaskPriority, TaskType } from "@/types";
 
 export default function TrainerWeekDetailPage() {
+  const { t } = useTranslation(["program", "common"]);
   const { weekId } = useParams<{ weekId: string }>();
   const { data: week, isLoading, isError, refetch } = useWeek(weekId);
   const setWeekLock = useSetWeekLock();
@@ -45,12 +47,12 @@ export default function TrainerWeekDetailPage() {
     <div className="space-y-6">
       <Button variant="ghost" size="sm" asChild className="-ml-2">
         <Link to="/trainer/program">
-          <ArrowLeft className="h-4 w-4" /> Back to program
+          <ArrowLeft className="h-4 w-4" /> {t("program:trainer.week.back")}
         </Link>
       </Button>
 
       <PageHeader
-        title={`Week ${week.weekNumber}: ${week.title}`}
+        title={`${t("common:table.week")} ${week.weekNumber}: ${week.title}`}
         description={week.description}
         actions={
           <div className="flex items-center gap-2">
@@ -63,7 +65,7 @@ export default function TrainerWeekDetailPage() {
                 )
               }
             />
-            <span className="text-sm text-muted-foreground">{week.isLocked ? "Locked" : "Unlocked"}</span>
+            <span className="text-sm text-muted-foreground">{week.isLocked ? t("common:status.locked") : t("common:status.unlocked")}</span>
           </div>
         }
       />
@@ -71,7 +73,7 @@ export default function TrainerWeekDetailPage() {
       {week.objectives.length > 0 && (
         <Card>
           <CardContent className="p-5">
-            <p className="mb-2 text-sm font-semibold">Objectives</p>
+            <p className="mb-2 text-sm font-semibold">{t("program:trainer.week.objectives")}</p>
             <ul className="list-inside list-disc space-y-1 text-sm text-muted-foreground">
               {week.objectives.map((o, i) => (
                 <li key={i}>{o}</li>
@@ -83,10 +85,10 @@ export default function TrainerWeekDetailPage() {
 
       <Tabs defaultValue="tasks">
         <TabsList>
-          <TabsTrigger value="tasks">Tasks ({week.tasks.length})</TabsTrigger>
-          <TabsTrigger value="resources">Resources ({week.resources.length})</TabsTrigger>
-          <TabsTrigger value="topics">Topics ({week.topics.length})</TabsTrigger>
-          <TabsTrigger value="research">Research Questions ({week.researchQuestions.length})</TabsTrigger>
+          <TabsTrigger value="tasks">{t("program:trainer.week.tabTasks", { count: week.tasks.length })}</TabsTrigger>
+          <TabsTrigger value="resources">{t("program:trainer.week.tabResources", { count: week.resources.length })}</TabsTrigger>
+          <TabsTrigger value="topics">{t("program:trainer.week.tabTopics", { count: week.topics.length })}</TabsTrigger>
+          <TabsTrigger value="research">{t("program:trainer.week.tabResearch", { count: week.researchQuestions.length })}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="tasks">
@@ -109,6 +111,7 @@ export default function TrainerWeekDetailPage() {
 // ── Tasks ──────────────────────────────────────────────────────────────
 
 function TasksTab({ weekId, tasks }: { weekId: string; tasks: import("@/types").Task[] }) {
+  const { t } = useTranslation(["program", "common"]);
   const [open, setOpen] = useState(false);
   const createTask = useCreateTask();
   const deleteTask = useDeleteTask();
@@ -137,10 +140,10 @@ function TasksTab({ weekId, tasks }: { weekId: string; tasks: import("@/types").
       },
       {
         onSuccess: () => {
-          toast.success("Task created");
+          toast.success(t("program:trainer.week.taskCreated"));
           setOpen(false);
         },
-        onError: (error) => toast.error(getErrorMessage(error, "Could not create task")),
+        onError: (error) => toast.error(getErrorMessage(error, t("program:trainer.week.taskCreateError"))),
       }
     );
   };
@@ -152,62 +155,62 @@ function TasksTab({ weekId, tasks }: { weekId: string; tasks: import("@/types").
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button size="sm">
-                <Plus className="h-4 w-4" /> Add Task
+                <Plus className="h-4 w-4" /> {t("program:trainer.week.addTask")}
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-xl">
               <DialogHeader>
-                <DialogTitle>Add task</DialogTitle>
+                <DialogTitle>{t("program:trainer.week.addTaskTitle")}</DialogTitle>
               </DialogHeader>
               <div className="grid max-h-[60vh] gap-3 overflow-y-auto pr-1">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label>Code</Label>
+                    <Label>{t("program:trainer.week.code")}</Label>
                     <Input placeholder="JS-001" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label>Points</Label>
+                    <Label>{t("program:trainer.week.points")}</Label>
                     <Input type="number" value={form.points} onChange={(e) => setForm({ ...form, points: Number(e.target.value) })} />
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Title</Label>
+                  <Label>{t("program:trainer.week.taskTitle")}</Label>
                   <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Description</Label>
+                  <Label>{t("program:trainer.week.taskDescription")}</Label>
                   <Textarea rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
                 </div>
                 <div className="grid grid-cols-3 gap-3">
                   <div className="space-y-1.5">
-                    <Label>Type</Label>
+                    <Label>{t("program:trainer.week.type")}</Label>
                     <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v as TaskType })}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        {["LEARNING", "CODING", "PROBLEM_SOLVING", "RESEARCH", "PROJECT"].map((t) => (
-                          <SelectItem key={t} value={t}>{t.replace("_", " ")}</SelectItem>
+                        {["LEARNING", "CODING", "PROBLEM_SOLVING", "RESEARCH", "PROJECT"].map((ty) => (
+                          <SelectItem key={ty} value={ty}>{t(`common:taskTypeLabels.${ty}`)}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-1.5">
-                    <Label>Priority</Label>
+                    <Label>{t("program:trainer.week.priority")}</Label>
                     <Select value={form.priority} onValueChange={(v) => setForm({ ...form, priority: v as TaskPriority })}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {["LOW", "MEDIUM", "HIGH", "URGENT"].map((p) => (
-                          <SelectItem key={p} value={p}>{p}</SelectItem>
+                          <SelectItem key={p} value={p}>{t(`common:priorityLabels.${p}`)}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-1.5">
-                    <Label>Difficulty</Label>
+                    <Label>{t("program:trainer.week.difficulty")}</Label>
                     <Select value={form.difficulty} onValueChange={(v) => setForm({ ...form, difficulty: v as TaskDifficulty })}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {["EASY", "MEDIUM", "HARD"].map((d) => (
-                          <SelectItem key={d} value={d}>{d}</SelectItem>
+                          <SelectItem key={d} value={d}>{t(`common:difficultyLabels.${d}`)}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -215,32 +218,32 @@ function TasksTab({ weekId, tasks }: { weekId: string; tasks: import("@/types").
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label>Estimated hours</Label>
+                    <Label>{t("program:trainer.week.estimatedHours")}</Label>
                     <Input type="number" value={form.estimatedHours} onChange={(e) => setForm({ ...form, estimatedHours: Number(e.target.value) })} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label>Due date</Label>
+                    <Label>{t("program:trainer.week.dueDate")}</Label>
                     <Input type="date" value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} />
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Instructions</Label>
+                  <Label>{t("program:trainer.week.instructions")}</Label>
                   <Textarea rows={3} value={form.instructions} onChange={(e) => setForm({ ...form, instructions: e.target.value })} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Acceptance criteria (one per line)</Label>
+                  <Label>{t("program:trainer.week.acceptanceCriteria")}</Label>
                   <Textarea rows={3} value={form.acceptanceCriteria} onChange={(e) => setForm({ ...form, acceptanceCriteria: e.target.value })} />
                 </div>
                 <label className="flex items-center gap-2 text-sm">
                   <Switch checked={form.isWeeklyProject} onCheckedChange={(v) => setForm({ ...form, isWeeklyProject: v })} />
-                  This is the weekly project
+                  {t("program:trainer.week.isWeeklyProject")}
                 </label>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                <Button variant="outline" onClick={() => setOpen(false)}>{t("common:actions.cancel")}</Button>
                 <Button onClick={submit} disabled={createTask.isPending || !form.code || !form.title}>
                   {createTask.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Create task
+                  {t("program:trainer.week.createTask")}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -248,16 +251,16 @@ function TasksTab({ weekId, tasks }: { weekId: string; tasks: import("@/types").
         </div>
 
         {tasks.length === 0 ? (
-          <EmptyState className="border-0" title="No tasks yet" />
+          <EmptyState className="border-0" title={t("program:trainer.week.noTasksYet")} />
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Code</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Priority</TableHead>
-                <TableHead>Points</TableHead>
-                <TableHead>Due</TableHead>
+                <TableHead>{t("common:table.code")}</TableHead>
+                <TableHead>{t("common:table.title")}</TableHead>
+                <TableHead>{t("common:table.priority")}</TableHead>
+                <TableHead>{t("common:table.points")}</TableHead>
+                <TableHead>{t("common:table.dueDate")}</TableHead>
                 <TableHead />
               </TableRow>
             </TableHeader>
@@ -266,7 +269,7 @@ function TasksTab({ weekId, tasks }: { weekId: string; tasks: import("@/types").
                 <TableRow key={task.id}>
                   <TableCell className="font-mono text-xs">{task.code}</TableCell>
                   <TableCell>
-                    {task.title} {task.isWeeklyProject && <Badge variant="outline" className="ml-1">Project</Badge>}
+                    {task.title} {task.isWeeklyProject && <Badge variant="outline" className="ml-1">{t("common:taskTypeLabels.PROJECT")}</Badge>}
                   </TableCell>
                   <TableCell><PriorityBadge priority={task.priority} /></TableCell>
                   <TableCell>{task.points}</TableCell>
@@ -277,7 +280,7 @@ function TasksTab({ weekId, tasks }: { weekId: string; tasks: import("@/types").
                       size="icon"
                       onClick={() =>
                         deleteTask.mutate(task.id, {
-                          onSuccess: () => toast.success("Task deleted"),
+                          onSuccess: () => toast.success(t("program:trainer.week.taskDeleted")),
                           onError: (error) => toast.error(getErrorMessage(error)),
                         })
                       }
@@ -298,6 +301,7 @@ function TasksTab({ weekId, tasks }: { weekId: string; tasks: import("@/types").
 // ── Resources ──────────────────────────────────────────────────────────
 
 function ResourcesTab({ weekId, resources }: { weekId: string; resources: import("@/types").Resource[] }) {
+  const { t } = useTranslation(["program", "common"]);
   const [open, setOpen] = useState(false);
   const createResource = useCreateResource(weekId);
   const deleteResource = useDeleteResource(weekId);
@@ -306,11 +310,11 @@ function ResourcesTab({ weekId, resources }: { weekId: string; resources: import
   const submit = () => {
     createResource.mutate(form, {
       onSuccess: () => {
-        toast.success("Resource added");
+        toast.success(t("program:trainer.week.resourceAdded"));
         setOpen(false);
         setForm({ title: "", description: "", url: "", type: "DOCUMENTATION", isRequired: false });
       },
-      onError: (error) => toast.error(getErrorMessage(error, "Could not add resource")),
+      onError: (error) => toast.error(getErrorMessage(error, t("program:trainer.week.resourceAddError"))),
     });
   };
 
@@ -320,46 +324,46 @@ function ResourcesTab({ weekId, resources }: { weekId: string; resources: import
         <div className="mb-4 flex justify-end">
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button size="sm"><Plus className="h-4 w-4" /> Add Resource</Button>
+              <Button size="sm"><Plus className="h-4 w-4" /> {t("program:trainer.week.addResource")}</Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>Add resource</DialogTitle></DialogHeader>
+              <DialogHeader><DialogTitle>{t("program:trainer.week.addResourceTitle")}</DialogTitle></DialogHeader>
               <div className="space-y-3">
                 <div className="space-y-1.5">
-                  <Label>Title</Label>
+                  <Label>{t("program:trainer.week.resourceTitle")}</Label>
                   <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Description</Label>
+                  <Label>{t("program:trainer.week.resourceDescription")}</Label>
                   <Textarea rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>URL</Label>
+                  <Label>{t("program:trainer.week.url")}</Label>
                   <Input value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} placeholder="https://..." />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label>Type</Label>
+                    <Label>{t("program:trainer.week.type2")}</Label>
                     <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v as ResourceType })}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        {["DOCUMENTATION", "ARTICLE", "VIDEO", "COURSE", "BOOK", "OTHER"].map((t) => (
-                          <SelectItem key={t} value={t}>{t}</SelectItem>
+                        {["DOCUMENTATION", "ARTICLE", "VIDEO", "COURSE", "BOOK", "OTHER"].map((ty) => (
+                          <SelectItem key={ty} value={ty}>{t(`common:resourceTypeLabels.${ty}`)}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
                   <label className="mt-6 flex items-center gap-2 text-sm">
                     <Switch checked={form.isRequired} onCheckedChange={(v) => setForm({ ...form, isRequired: v })} />
-                    Required
+                    {t("common:status.required")}
                   </label>
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                <Button variant="outline" onClick={() => setOpen(false)}>{t("common:actions.cancel")}</Button>
                 <Button onClick={submit} disabled={createResource.isPending || !form.title || !form.url}>
                   {createResource.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Add
+                  {t("program:trainer.week.add")}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -367,7 +371,7 @@ function ResourcesTab({ weekId, resources }: { weekId: string; resources: import
         </div>
 
         {resources.length === 0 ? (
-          <EmptyState className="border-0" title="No resources yet" />
+          <EmptyState className="border-0" title={t("program:trainer.week.noResourcesYet")} />
         ) : (
           <div className="divide-y">
             {resources.map((r) => (
@@ -379,8 +383,8 @@ function ResourcesTab({ weekId, resources }: { weekId: string; resources: import
                   <p className="text-xs text-muted-foreground">{r.description}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline">{r.type}</Badge>
-                  {r.isRequired && <Badge variant="warning">Required</Badge>}
+                  <Badge variant="outline">{t(`common:resourceTypeLabels.${r.type}`)}</Badge>
+                  {r.isRequired && <Badge variant="warning">{t("common:status.required")}</Badge>}
                   <Button variant="ghost" size="icon" onClick={() => deleteResource.mutate(r.id)}>
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
@@ -397,6 +401,7 @@ function ResourcesTab({ weekId, resources }: { weekId: string; resources: import
 // ── Topics ─────────────────────────────────────────────────────────────
 
 function TopicsTab({ weekId, topics }: { weekId: string; topics: import("@/types").Topic[] }) {
+  const { t } = useTranslation(["program", "common"]);
   const [title, setTitle] = useState("");
   const createTopic = useCreateTopic(weekId);
   const deleteTopic = useDeleteTopic(weekId);
@@ -405,7 +410,7 @@ function TopicsTab({ weekId, topics }: { weekId: string; topics: import("@/types
     <Card>
       <CardContent className="space-y-4 p-5">
         <div className="flex gap-2">
-          <Input placeholder="New topic title" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <Input placeholder={t("program:trainer.week.newTopicPlaceholder")} value={title} onChange={(e) => setTitle(e.target.value)} />
           <Button
             disabled={!title.trim() || createTopic.isPending}
             onClick={() =>
@@ -415,17 +420,17 @@ function TopicsTab({ weekId, topics }: { weekId: string; topics: import("@/types
               )
             }
           >
-            Add
+            {t("program:trainer.week.add")}
           </Button>
         </div>
         {topics.length === 0 ? (
-          <EmptyState className="border-0" title="No topics yet" />
+          <EmptyState className="border-0" title={t("program:trainer.week.noTopicsYet")} />
         ) : (
           <div className="flex flex-wrap gap-2">
-            {topics.map((t) => (
-              <Badge key={t.id} variant="secondary" className="gap-1 py-1.5">
-                {t.title}
-                <button onClick={() => deleteTopic.mutate(t.id)}>
+            {topics.map((topic) => (
+              <Badge key={topic.id} variant="secondary" className="gap-1 py-1.5">
+                {topic.title}
+                <button onClick={() => deleteTopic.mutate(topic.id)}>
                   <Trash2 className="h-3 w-3 text-muted-foreground hover:text-destructive" />
                 </button>
               </Badge>
@@ -440,6 +445,7 @@ function TopicsTab({ weekId, topics }: { weekId: string; topics: import("@/types
 // ── Research Questions ────────────────────────────────────────────────
 
 function ResearchTab({ weekId, questions }: { weekId: string; questions: import("@/types").ResearchQuestion[] }) {
+  const { t } = useTranslation(["program", "common"]);
   const [question, setQuestion] = useState("");
   const createQuestion = useCreateResearchQuestion(weekId);
   const deleteQuestion = useDeleteResearchQuestion(weekId);
@@ -448,7 +454,7 @@ function ResearchTab({ weekId, questions }: { weekId: string; questions: import(
     <Card>
       <CardContent className="space-y-4 p-5">
         <div className="flex gap-2">
-          <Input placeholder="New research question" value={question} onChange={(e) => setQuestion(e.target.value)} />
+          <Input placeholder={t("program:trainer.week.newQuestionPlaceholder")} value={question} onChange={(e) => setQuestion(e.target.value)} />
           <Button
             disabled={!question.trim() || createQuestion.isPending}
             onClick={() =>
@@ -458,11 +464,11 @@ function ResearchTab({ weekId, questions }: { weekId: string; questions: import(
               )
             }
           >
-            Add
+            {t("program:trainer.week.add")}
           </Button>
         </div>
         {questions.length === 0 ? (
-          <EmptyState className="border-0" title="No research questions yet" />
+          <EmptyState className="border-0" title={t("program:trainer.week.noQuestionsYet")} />
         ) : (
           <div className="space-y-2">
             {questions.map((q) => (

@@ -1,0 +1,32 @@
+{
+  "title": "Settings",
+  "subtitle": "Manage your profile, program configuration and preferences.",
+  "tabs": {
+    "profile": "Profile",
+    "program": "Program",
+    "integrations": "GitHub Integration",
+    "language": "Language"
+  },
+  "profile": {
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "phone": "Phone",
+    "saveChanges": "Save changes",
+    "updated": "Profile updated"
+  },
+  "program": {
+    "title": "Program Settings",
+    "description": "Description",
+    "unlockStrategy": "Week unlock strategy",
+    "strategyManual": "Manual — trainer unlocks each week",
+    "strategyAutomatic": "Automatic — unlock by start date",
+    "save": "Save program settings",
+    "saved": "Program settings saved"
+  },
+  "integrations": {
+    "title": "GitHub Integration",
+    "description": "Repository and pull request metadata is fetched from the public GitHub API when a trainee submits work. An optional GITHUB_TOKEN can be set on the server to raise rate limits — it is never required for basic use, and GitHub outages never block submissions.",
+    "note": "OAuth-based private repository access, webhooks and automatic PR status updates are supported by the architecture and can be added later without a rewrite (see the GitHub service on the backend)."
+  }
+}

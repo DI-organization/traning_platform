@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Search } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,6 +21,7 @@ import { toast } from "sonner";
 import { getErrorMessage } from "@/api/client";
 
 export default function TraineesListPage() {
+  const { t } = useTranslation(["trainees", "common"]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
   const [page, setPage] = useState(1);
@@ -36,7 +38,7 @@ export default function TraineesListPage() {
     setTraineeStatus.mutate(
       { id, isActive: !isActive },
       {
-        onSuccess: () => toast.success(!isActive ? "Trainee activated" : "Trainee deactivated"),
+        onSuccess: () => toast.success(!isActive ? t("trainees:list.activated") : t("trainees:list.deactivated")),
         onError: (error) => toast.error(getErrorMessage(error)),
       }
     );
@@ -44,13 +46,13 @@ export default function TraineesListPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Trainees" description="Manage trainee accounts and monitor their progress." actions={<CreateTraineeDialog />} />
+      <PageHeader title={t("trainees:list.title")} description={t("trainees:list.subtitle")} actions={<CreateTraineeDialog />} />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1 sm:max-w-xs">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name or email..."
+            placeholder={t("trainees:list.searchPlaceholder")}
             className="pl-8"
             value={search}
             onChange={(e) => {
@@ -64,9 +66,9 @@ export default function TraineesListPage() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All statuses</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectItem value="all">{t("trainees:list.allStatuses")}</SelectItem>
+            <SelectItem value="active">{t("common:status.active")}</SelectItem>
+            <SelectItem value="inactive">{t("common:status.inactive")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -80,46 +82,48 @@ export default function TraineesListPage() {
               <TableSkeleton rows={6} cols={6} />
             </div>
           ) : !data || data.items.length === 0 ? (
-            <EmptyState className="border-0" title="No trainees found" description="Try adjusting your search or filters." />
+            <EmptyState className="border-0" title={t("trainees:list.noResultsTitle")} description={t("trainees:list.noResultsDescription")} />
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Trainee</TableHead>
-                  <TableHead>Week</TableHead>
-                  <TableHead>Progress</TableHead>
-                  <TableHead>Score</TableHead>
-                  <TableHead>Last Activity</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>{t("common:table.trainee")}</TableHead>
+                  <TableHead>{t("common:table.week")}</TableHead>
+                  <TableHead>{t("common:table.progress")}</TableHead>
+                  <TableHead>{t("common:table.score")}</TableHead>
+                  <TableHead>{t("common:table.lastActivity")}</TableHead>
+                  <TableHead>{t("common:table.status")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.items.map((t) => (
-                  <TableRow key={t.id}>
+                {data.items.map((trainee) => (
+                  <TableRow key={trainee.id}>
                     <TableCell>
-                      <Link to={`/trainer/trainees/${t.id}`} className="flex items-center gap-2">
+                      <Link to={`/trainer/trainees/${trainee.id}`} className="flex items-center gap-2">
                         <Avatar className="h-8 w-8">
-                          <AvatarFallback>{initials(t.firstName, t.lastName)}</AvatarFallback>
+                          <AvatarFallback>{initials(trainee.firstName, trainee.lastName)}</AvatarFallback>
                         </Avatar>
                         <div>
-                          <p className="font-medium leading-tight">{t.firstName} {t.lastName}</p>
-                          <p className="text-xs text-muted-foreground">{t.email}</p>
+                          <p className="font-medium leading-tight">{trainee.firstName} {trainee.lastName}</p>
+                          <p className="text-xs text-muted-foreground">{trainee.email}</p>
                         </div>
                       </Link>
                     </TableCell>
-                    <TableCell>{t.currentWeek ?? "—"}</TableCell>
+                    <TableCell>{trainee.currentWeek ?? "—"}</TableCell>
                     <TableCell className="w-40">
                       <div className="flex items-center gap-2">
-                        <Progress value={t.progress.progressPercent} className="h-1.5 w-24" />
-                        <span className="text-xs text-muted-foreground">{t.progress.progressPercent}%</span>
+                        <Progress value={trainee.progress.progressPercent} className="h-1.5 w-24" />
+                        <span className="text-xs text-muted-foreground">{trainee.progress.progressPercent}%</span>
                       </div>
                     </TableCell>
-                    <TableCell>{t.averageScore}</TableCell>
-                    <TableCell className="text-xs text-muted-foreground">{formatRelativeTime(t.lastActivityAt)}</TableCell>
+                    <TableCell>{trainee.averageScore}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{formatRelativeTime(trainee.lastActivityAt)}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Switch checked={t.isActive} onCheckedChange={() => toggleStatus(t.id, t.isActive)} />
-                        <Badge variant={t.isActive ? "success" : "secondary"}>{t.isActive ? "Active" : "Inactive"}</Badge>
+                        <Switch checked={trainee.isActive} onCheckedChange={() => toggleStatus(trainee.id, trainee.isActive)} />
+                        <Badge variant={trainee.isActive ? "success" : "secondary"}>
+                          {trainee.isActive ? t("common:status.active") : t("common:status.inactive")}
+                        </Badge>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -133,7 +137,12 @@ export default function TraineesListPage() {
       {data && data.pagination.totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>
-            Page {data.pagination.page} of {data.pagination.totalPages} ({data.pagination.total} trainees)
+            {t("common:pagination.pageOfWithTotal", {
+              page: data.pagination.page,
+              totalPages: data.pagination.totalPages,
+              total: data.pagination.total,
+              label: t("trainees:list.paginationLabel"),
+            })}
           </span>
           <div className="flex gap-2">
             <button
@@ -141,14 +150,14 @@ export default function TraineesListPage() {
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
             >
-              Previous
+              {t("common:actions.previous")}
             </button>
             <button
               className="rounded-md border px-3 py-1 disabled:opacity-50"
               disabled={page >= data.pagination.totalPages}
               onClick={() => setPage((p) => p + 1)}
             >
-              Next
+              {t("common:actions.next")}
             </button>
           </div>
         </div>

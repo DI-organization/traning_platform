@@ -1,0 +1,52 @@
+{
+  "trainer": {
+    "welcome": "مرحباً بعودتك، {{name}}",
+    "subtitle": "هذا ملخص تقدم الدفعة هذا الأسبوع.",
+    "kpi": {
+      "totalTrainees": "إجمالي المتدربين",
+      "activeTrainees": "المتدربون النشطون",
+      "overallCompletion": "نسبة الإنجاز الكلية",
+      "averageScore": "متوسط الدرجات",
+      "tasksCompleted": "المهام المكتملة",
+      "tasksPending": "المهام المعلّقة",
+      "overdueTasks": "المهام المتأخرة",
+      "pendingReviews": "بانتظار المراجعة"
+    },
+    "traineeProgress": "تقدم المتدربين",
+    "noTrainees": "لا يوجد متدربون بعد",
+    "noTraineesDescription": "أنشئ حساب متدرب للبدء.",
+    "pendingReviewsTitle": "بانتظار المراجعة",
+    "allCaughtUp": "لا شيء معلّق",
+    "noSubmissionsAwaiting": "لا توجد تسليمات بانتظار المراجعة.",
+    "review": "مراجعة",
+    "recentActivity": "النشاط الأخير",
+    "noRecentActivity": "لا يوجد نشاط حديث",
+    "loadError": "تعذّر تحميل لوحة التحكم."
+  },
+  "trainee": {
+    "welcome": "مرحباً، {{name}}",
+    "weekProgress": "الأسبوع {{week}} من {{total}} — {{title}}",
+    "notEnrolled": "أنت غير مسجّل في أي برنامج تدريبي حالياً.",
+    "kpi": {
+      "overallProgress": "التقدم الكلي",
+      "averageScore": "متوسط الدرجات",
+      "completedTasks": "المهام المكتملة",
+      "pendingTasks": "المهام المعلّقة"
+    },
+    "continueLearning": "أكمل التعلّم",
+    "viewWeek": "عرض الأسبوع",
+    "allCaughtUp": "أنجزت كل شيء",
+    "noPendingTasks": "لا توجد مهام معلّقة في أسبوعك الحالي.",
+    "startWorking": "ابدأ العمل",
+    "upcomingDeadlines": "المواعيد النهائية القادمة",
+    "noUpcomingDeadlines": "لا توجد مواعيد نهائية قادمة",
+    "latestFeedback": "آخر الملاحظات",
+    "noFeedbackYet": "لا توجد ملاحظات بعد",
+    "githubActivity": "نشاط GitHub",
+    "noGithubLinked": "لا يوجد حساب GitHub مرتبط",
+    "noGithubLinkedDescription": "أضف اسم المستخدم على GitHub في ملفك الشخصي.",
+    "noRepoActivity": "لا يوجد نشاط على المستودعات بعد",
+    "unreadNotifications": "لديك {{count}} إشعار غير مقروء — تحقق من أيقونة الجرس بالأعلى.",
+    "unreadNotifications_plural": "لديك {{count}} إشعارات غير مقروءة — تحقق من أيقونة الجرس بالأعلى."
+  }
+}

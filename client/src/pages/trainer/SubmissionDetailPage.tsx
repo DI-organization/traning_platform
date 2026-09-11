@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { ArrowLeft, ExternalLink, Github, GitPullRequest, Loader2, Star, GitFork } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,21 +18,22 @@ import { formatDate, formatRelativeTime, initials } from "@/lib/format";
 import { getErrorMessage } from "@/api/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-const SCORE_FIELDS = [
-  { key: "taskCompletion", label: "Task Completion" },
-  { key: "functionality", label: "Functionality" },
-  { key: "codeQuality", label: "Code Quality" },
-  { key: "architecture", label: "Architecture" },
-  { key: "gitUsage", label: "Git Usage" },
-  { key: "problemSolving", label: "Problem Solving" },
-  { key: "documentation", label: "Documentation" },
-  { key: "testing", label: "Testing" },
-  { key: "technicalUnderstanding", label: "Technical Understanding" },
+const SCORE_FIELD_KEYS = [
+  "taskCompletion",
+  "functionality",
+  "codeQuality",
+  "architecture",
+  "gitUsage",
+  "problemSolving",
+  "documentation",
+  "testing",
+  "technicalUnderstanding",
 ] as const;
 
-type ScoreKey = (typeof SCORE_FIELDS)[number]["key"];
+type ScoreKey = (typeof SCORE_FIELD_KEYS)[number];
 
 export default function TrainerSubmissionDetailPage() {
+  const { t } = useTranslation(["submissions", "common"]);
   const { id } = useParams<{ id: string }>();
   const { data: submission, isLoading, isError, refetch } = useSubmission(id);
   const createReview = useCreateReview();
@@ -39,7 +41,7 @@ export default function TrainerSubmissionDetailPage() {
 
   const [feedback, setFeedback] = useState("");
   const [scores, setScores] = useState<Record<ScoreKey, string>>(
-    Object.fromEntries(SCORE_FIELDS.map((f) => [f.key, ""])) as Record<ScoreKey, string>
+    Object.fromEntries(SCORE_FIELD_KEYS.map((k) => [k, ""])) as Record<ScoreKey, string>
   );
 
   if (isLoading) return <Skeleton className="h-96 w-full" />;
@@ -47,20 +49,20 @@ export default function TrainerSubmissionDetailPage() {
 
   const submit = (decision: "APPROVED" | "CHANGES_REQUESTED") => {
     if (!feedback.trim()) {
-      toast.error("Feedback is required");
+      toast.error(t("submissions:detail.feedbackRequired"));
       return;
     }
     const parsedScores: Record<string, number> = {};
-    for (const f of SCORE_FIELDS) {
-      const v = scores[f.key];
-      if (v !== "") parsedScores[f.key] = Number(v);
+    for (const key of SCORE_FIELD_KEYS) {
+      const v = scores[key];
+      if (v !== "") parsedScores[key] = Number(v);
     }
 
     createReview.mutate(
       { submissionId: submission.id, input: { decision, feedback, scores: Object.keys(parsedScores).length ? parsedScores : undefined } },
       {
         onSuccess: () => {
-          toast.success(decision === "APPROVED" ? "Submission approved" : "Changes requested");
+          toast.success(decision === "APPROVED" ? t("submissions:detail.approved") : t("submissions:detail.changesRequested"));
           setFeedback("");
         },
         onError: (error) => toast.error(getErrorMessage(error)),
@@ -73,12 +75,15 @@ export default function TrainerSubmissionDetailPage() {
   return (
     <div className="space-y-6">
       <Button variant="ghost" size="sm" asChild className="-ml-2">
-        <Link to="/trainer/submissions"><ArrowLeft className="h-4 w-4" /> Back to submissions</Link>
+        <Link to="/trainer/submissions"><ArrowLeft className="h-4 w-4" /> {t("submissions:detail.back")}</Link>
       </Button>
 
       <PageHeader
         title={`${submission.task?.code} — ${submission.task?.title}`}
-        description={`Attempt #${submission.attemptNumber} · Submitted ${formatRelativeTime(submission.submittedAt)}`}
+        description={t("submissions:detail.attemptSubmitted", {
+          number: submission.attemptNumber,
+          time: formatRelativeTime(submission.submittedAt),
+        })}
         actions={<StatusBadge status={submission.status} />}
       />
 
@@ -97,17 +102,17 @@ export default function TrainerSubmissionDetailPage() {
           </Card>
 
           <Card>
-            <CardHeader><CardTitle>Submission</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t("submissions:detail.submissionCard")}</CardTitle></CardHeader>
             <CardContent className="space-y-3 text-sm">
               {submission.repositoryUrl && (
-                <DetailRow label="Repository" value={<ExternalLinkText url={submission.repositoryUrl} />} />
+                <DetailRow label={t("submissions:detail.repository")} value={<ExternalLinkText url={submission.repositoryUrl} />} />
               )}
-              {submission.branchName && <DetailRow label="Branch" value={submission.branchName} />}
-              {submission.pullRequestUrl && <DetailRow label="Pull Request" value={<ExternalLinkText url={submission.pullRequestUrl} />} />}
-              {submission.liveDemoUrl && <DetailRow label="Live Demo" value={<ExternalLinkText url={submission.liveDemoUrl} />} />}
+              {submission.branchName && <DetailRow label={t("submissions:detail.branch")} value={submission.branchName} />}
+              {submission.pullRequestUrl && <DetailRow label={t("submissions:detail.pullRequest")} value={<ExternalLinkText url={submission.pullRequestUrl} />} />}
+              {submission.liveDemoUrl && <DetailRow label={t("submissions:detail.liveDemo")} value={<ExternalLinkText url={submission.liveDemoUrl} />} />}
               {submission.notes && (
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground">Notes</p>
+                  <p className="text-xs font-medium text-muted-foreground">{t("submissions:detail.notes")}</p>
                   <p className="mt-1 whitespace-pre-wrap">{submission.notes}</p>
                 </div>
               )}
@@ -117,9 +122,9 @@ export default function TrainerSubmissionDetailPage() {
           {(submission.githubRepository || submission.githubPullRequest) && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="flex items-center gap-2"><Github className="h-4 w-4" /> GitHub Metadata</CardTitle>
+                <CardTitle className="flex items-center gap-2"><Github className="h-4 w-4" /> {t("submissions:detail.githubMetadata")}</CardTitle>
                 <Button variant="ghost" size="sm" onClick={() => refetchGithub.mutate(submission.id)} disabled={refetchGithub.isPending}>
-                  {refetchGithub.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Refetch"}
+                  {refetchGithub.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : t("submissions:detail.refetch")}
                 </Button>
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
@@ -132,13 +137,13 @@ export default function TrainerSubmissionDetailPage() {
                         <div className="flex items-center gap-4 pt-1 text-xs text-muted-foreground">
                           <span className="flex items-center gap-1"><Star className="h-3 w-3" /> {submission.githubRepository.stars ?? 0}</span>
                           <span className="flex items-center gap-1"><GitFork className="h-3 w-3" /> {submission.githubRepository.forks ?? 0}</span>
-                          <span>Branch: {submission.githubRepository.defaultBranch}</span>
-                          <span>Last push {formatRelativeTime(submission.githubRepository.lastPushAt)}</span>
+                          <span>{t("submissions:detail.branch")}: {submission.githubRepository.defaultBranch}</span>
+                          <span>{formatRelativeTime(submission.githubRepository.lastPushAt)}</span>
                         </div>
                       </>
                     ) : (
                       <p className="text-xs text-muted-foreground">
-                        GitHub metadata unavailable ({submission.githubRepository.fetchStatus.toLowerCase().replace("_", " ")}). This does not block review.
+                        {t("submissions:detail.repoUnavailable", { status: submission.githubRepository.fetchStatus.toLowerCase().replace("_", " ") })}
                       </p>
                     )}
                   </div>
@@ -150,12 +155,14 @@ export default function TrainerSubmissionDetailPage() {
                         <p className="flex items-center gap-1 font-medium"><GitPullRequest className="h-3.5 w-3.5" /> #{submission.githubPullRequest.number} {submission.githubPullRequest.title}</p>
                         <div className="flex items-center gap-4 pt-1 text-xs text-muted-foreground">
                           <Badge variant="outline">{submission.githubPullRequest.state}</Badge>
-                          <span>by {submission.githubPullRequest.author}</span>
-                          <span>opened {formatRelativeTime(submission.githubPullRequest.prCreatedAt)}</span>
+                          <span>{submission.githubPullRequest.author}</span>
+                          <span>{formatRelativeTime(submission.githubPullRequest.prCreatedAt)}</span>
                         </div>
                       </>
                     ) : (
-                      <p className="text-xs text-muted-foreground">PR metadata unavailable ({submission.githubPullRequest.fetchStatus.toLowerCase().replace("_", " ")}).</p>
+                      <p className="text-xs text-muted-foreground">
+                        {t("submissions:detail.prUnavailable", { status: submission.githubPullRequest.fetchStatus.toLowerCase().replace("_", " ") })}
+                      </p>
                     )}
                   </div>
                 )}
@@ -164,18 +171,18 @@ export default function TrainerSubmissionDetailPage() {
           )}
 
           <Card>
-            <CardHeader><CardTitle>Task Requirements</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t("submissions:detail.taskRequirements")}</CardTitle></CardHeader>
             <CardContent className="space-y-3 text-sm">
               {submission.task?.description && <p className="text-muted-foreground">{submission.task.description}</p>}
               {submission.task?.instructions && (
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground">Instructions</p>
+                  <p className="text-xs font-medium text-muted-foreground">{t("submissions:detail.instructions")}</p>
                   <p className="mt-1 whitespace-pre-wrap">{submission.task.instructions}</p>
                 </div>
               )}
               {submission.task?.acceptanceCriteria && submission.task.acceptanceCriteria.length > 0 && (
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground">Acceptance Criteria</p>
+                  <p className="text-xs font-medium text-muted-foreground">{t("submissions:detail.acceptanceCriteria")}</p>
                   <ul className="mt-1 list-inside list-disc space-y-0.5">
                     {submission.task.acceptanceCriteria.map((c, i) => (
                       <li key={i}>{c}</li>
@@ -188,7 +195,7 @@ export default function TrainerSubmissionDetailPage() {
 
           {submission.reviews && submission.reviews.length > 0 && (
             <Card>
-              <CardHeader><CardTitle>Previous Reviews</CardTitle></CardHeader>
+              <CardHeader><CardTitle>{t("submissions:detail.previousReviews")}</CardTitle></CardHeader>
               <CardContent className="space-y-3">
                 {submission.reviews.map((r) => (
                   <div key={r.id} className="rounded-md border p-3 text-sm">
@@ -208,7 +215,7 @@ export default function TrainerSubmissionDetailPage() {
         <div className="space-y-6">
           {submission.evaluation && (
             <Card>
-              <CardHeader><CardTitle>Score</CardTitle></CardHeader>
+              <CardHeader><CardTitle>{t("submissions:detail.score")}</CardTitle></CardHeader>
               <CardContent>
                 <p className="text-3xl font-bold">{submission.evaluation.totalScore}<span className="text-base font-normal text-muted-foreground">/100</span></p>
               </CardContent>
@@ -217,24 +224,24 @@ export default function TrainerSubmissionDetailPage() {
 
           {canReview ? (
             <Card>
-              <CardHeader><CardTitle>Review this submission</CardTitle></CardHeader>
+              <CardHeader><CardTitle>{t("submissions:detail.reviewThisSubmission")}</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-1.5">
-                  <Label>Feedback</Label>
-                  <Textarea rows={4} value={feedback} onChange={(e) => setFeedback(e.target.value)} placeholder="Leave feedback for the trainee..." />
+                  <Label>{t("submissions:detail.feedback")}</Label>
+                  <Textarea rows={4} value={feedback} onChange={(e) => setFeedback(e.target.value)} placeholder={t("submissions:detail.feedbackPlaceholder")} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Scores (optional, 0-100)</Label>
+                  <Label>{t("submissions:detail.scoresOptional")}</Label>
                   <div className="grid grid-cols-2 gap-2">
-                    {SCORE_FIELDS.map((f) => (
-                      <div key={f.key} className="space-y-1">
-                        <span className="text-xs text-muted-foreground">{f.label}</span>
+                    {SCORE_FIELD_KEYS.map((key) => (
+                      <div key={key} className="space-y-1">
+                        <span className="text-xs text-muted-foreground">{t(`submissions:detail.scoreFields.${key}`)}</span>
                         <Input
                           type="number"
                           min={0}
                           max={100}
-                          value={scores[f.key]}
-                          onChange={(e) => setScores({ ...scores, [f.key]: e.target.value })}
+                          value={scores[key]}
+                          onChange={(e) => setScores({ ...scores, [key]: e.target.value })}
                         />
                       </div>
                     ))}
@@ -243,10 +250,10 @@ export default function TrainerSubmissionDetailPage() {
                 <div className="flex gap-2">
                   <Button className="flex-1" onClick={() => submit("APPROVED")} disabled={createReview.isPending}>
                     {createReview.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-                    Approve
+                    {t("submissions:detail.approve")}
                   </Button>
                   <Button variant="outline" className="flex-1" onClick={() => submit("CHANGES_REQUESTED")} disabled={createReview.isPending}>
-                    Request Changes
+                    {t("submissions:detail.requestChanges")}
                   </Button>
                 </div>
               </CardContent>
@@ -254,7 +261,7 @@ export default function TrainerSubmissionDetailPage() {
           ) : (
             <Card>
               <CardContent className="p-5 text-sm text-muted-foreground">
-                This submission has already been reviewed ({submission.status.replace("_", " ").toLowerCase()}).
+                {t("submissions:detail.alreadyReviewed", { status: t(`common:statusLabels.${submission.status}`) })}
               </CardContent>
             </Card>
           )}
