@@ -10,7 +10,10 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5173,
+    // 5173 is permanently occupied by an unrelated local service on this
+    // machine; pin the dev server to 5174 so it's never ambiguous which
+    // origin is CORS-allowed on the backend (see server/.env CLIENT_URL).
+    port: 5174,
     proxy: {
       "/api": {
         target: "http://localhost:5000",

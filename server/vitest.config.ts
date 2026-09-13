@@ -7,5 +7,6 @@ export default defineConfig({
     hookTimeout: 20000,
     globals: false,
     include: ["tests/**/*.test.ts"],
+    globalSetup: ["tests/globalSetup.ts"],
   },
 });

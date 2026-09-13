@@ -235,7 +235,7 @@ JWT_EXPIRES_IN="7d"
 # Optional. Raises GitHub public API rate limits. Not required for basic use.
 GITHUB_TOKEN=""
 
-CLIENT_URL="http://localhost:5173"
+CLIENT_URL="http://localhost:5174"
 PORT=5000
 NODE_ENV=development
 ```
@@ -290,7 +290,7 @@ npm install
 npm run dev
 ```
 
-- App: http://localhost:5173 (Vite will pick the next free port if busy)
+- App: http://localhost:5174 (Vite will pick the next free port if busy)
 
 Other useful scripts:
 
@@ -430,12 +430,14 @@ These are enforced in the service layer, not just the UI:
 Built in phases per the original brief; the following are intentionally
 lighter-weight given scope, and are the natural next steps:
 
-- **i18n coverage**: the i18next + RTL infrastructure is fully wired and
-  validated (language switcher, `<html dir>` flip, structured JSON
-  namespaces), with full translation coverage for auth, navigation and
-  global chrome. Deeper page-level copy (task/program detail text, form
-  labels on every page) is still English-only and can be moved into the
-  existing `locales/*/*.json` namespace files incrementally.
+- **i18n coverage**: English and Arabic (RTL) are fully wired and translated
+  end-to-end — every trainer/trainee page, dialog, table, chart label and
+  shared component (sidebar, navbar, notifications, status/priority/type
+  badges, empty/error states) runs through `i18next` via structured JSON
+  namespace files (`locales/en/*.json`, `locales/ar/*.json`), verified
+  in-browser in both languages including the RTL layout flip. Seeded
+  curriculum content (task titles/descriptions, trainer feedback text) is
+  intentionally left in English since it's database data, not UI chrome.
 - **Frontend automated tests**: backend business logic has full Vitest
   coverage; frontend testing was deprioritized in favor of manual
   browser-verified coverage of every golden-path flow (auth, program/task
