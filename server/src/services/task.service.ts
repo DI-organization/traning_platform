@@ -68,14 +68,16 @@ interface ListTasksParams {
   status?: AssignmentStatus;
   search?: string;
   userId?: string; // when set, merges per-user assignment status
+  hideLockedWeeks?: boolean; // trainees never see tasks from a week that isn't unlocked yet
 }
 
 export async function listTasks(params: ListTasksParams) {
-  const { page, limit, weekId, type, search, userId, status } = params;
+  const { page, limit, weekId, type, search, userId, status, hideLockedWeeks } = params;
 
   const where: Prisma.TaskWhereInput = {
     ...(weekId ? { weekId } : {}),
     ...(type ? { type: type as never } : {}),
+    ...(hideLockedWeeks ? { week: { isLocked: false } } : {}),
     ...(search
       ? {
           OR: [
@@ -110,14 +112,18 @@ export async function listTasks(params: ListTasksParams) {
   return { data, pagination: buildPagination(page, limit, total) };
 }
 
-export async function getTaskDetail(taskId: string, userId?: string) {
+export async function getTaskDetail(taskId: string, userId?: string, enforceLock = false) {
   const task = await prisma.task.findUnique({
     where: { id: taskId },
     include: {
-      week: { select: { id: true, weekNumber: true, title: true, programId: true } },
+      week: { select: { id: true, weekNumber: true, title: true, programId: true, isLocked: true } },
     },
   });
   if (!task) throw ApiError.notFound("Task not found");
+
+  if (enforceLock && task.week.isLocked) {
+    throw ApiError.forbidden("This week is not unlocked yet", "WEEK_LOCKED");
+  }
 
   let assignment = null;
   let submissions: Awaited<ReturnType<typeof prisma.submission.findMany>> = [];
@@ -143,8 +149,9 @@ async function ensureAssignment(taskId: string, userId: string) {
 }
 
 export async function startTask(taskId: string, userId: string) {
-  const task = await prisma.task.findUnique({ where: { id: taskId } });
+  const task = await prisma.task.findUnique({ where: { id: taskId }, include: { week: { select: { isLocked: true } } } });
   if (!task) throw ApiError.notFound("Task not found");
+  if (task.week.isLocked) throw ApiError.forbidden("This week is not unlocked yet", "WEEK_LOCKED");
 
   const assignment = await ensureAssignment(taskId, userId);
   if (assignment.status === "NOT_STARTED") {

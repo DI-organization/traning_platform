@@ -19,8 +19,26 @@ export const updateProgramSchema = z.object({
   }),
 });
 
+export const createPhaseSchema = z.object({
+  body: z.object({
+    phaseNumber: z.number().int().min(1),
+    title: z.string().min(1),
+    description: z.string().optional(),
+    order: z.number().int().default(0),
+  }),
+});
+
+export const updatePhaseSchema = z.object({
+  body: z.object({
+    title: z.string().min(1).optional(),
+    description: z.string().optional(),
+    order: z.number().int().optional(),
+  }),
+});
+
 export const createWeekSchema = z.object({
   body: z.object({
+    phaseId: z.string().uuid(),
     weekNumber: z.number().int().min(1),
     title: z.string().min(1),
     description: z.string().min(1),
@@ -35,6 +53,7 @@ export const createWeekSchema = z.object({
 
 export const updateWeekSchema = z.object({
   body: z.object({
+    phaseId: z.string().uuid().optional(),
     title: z.string().min(1).optional(),
     description: z.string().min(1).optional(),
     objectives: z.array(z.string()).optional(),

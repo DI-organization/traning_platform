@@ -40,13 +40,15 @@ export const listTasks = asyncHandler(async (req: Request, res: Response) => {
     status: req.query.status as AssignmentStatus | undefined,
     search: req.query.search as string | undefined,
     userId,
+    hideLockedWeeks: req.user.role === "TRAINEE",
   });
   sendSuccess(res, result.data, 200, result.pagination);
 });
 
 export const getTask = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.role === "TRAINEE" ? req.user.userId : (req.query.userId as string | undefined);
-  sendSuccess(res, await taskService.getTaskDetail(req.params.id, userId));
+  const isTrainee = req.user?.role === "TRAINEE";
+  const userId = isTrainee ? req.user!.userId : (req.query.userId as string | undefined);
+  sendSuccess(res, await taskService.getTaskDetail(req.params.id, userId, isTrainee));
 });
 
 export const startTask = asyncHandler(async (req: Request, res: Response) => {

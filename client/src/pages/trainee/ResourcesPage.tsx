@@ -23,7 +23,7 @@ export default function TraineeResourcesPage() {
   const [typeFilter, setTypeFilter] = useState("all");
 
   const weeks = useMemo(
-    () => [...(program?.weeks ?? [])].filter((w) => !w.isLocked).sort((a, b) => a.weekNumber - b.weekNumber),
+    () => [...(program?.phases?.flatMap((p) => p.weeks) ?? [])].filter((w) => !w.isLocked).sort((a, b) => a.weekNumber - b.weekNumber),
     [program]
   );
 

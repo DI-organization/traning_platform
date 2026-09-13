@@ -21,7 +21,22 @@ export const updateProgram = asyncHandler(async (req: Request, res: Response) =>
 });
 
 export const getProgram = asyncHandler(async (req: Request, res: Response) => {
-  sendSuccess(res, await programService.getProgramWithWeeks(req.params.id));
+  const viewer = req.user ? { userId: req.user.userId, role: req.user.role } : undefined;
+  sendSuccess(res, await programService.getProgramWithWeeks(req.params.id, viewer));
+});
+
+export const createPhase = asyncHandler(async (req: Request, res: Response) => {
+  const phase = await programService.createPhase(req.params.programId, req.body);
+  sendSuccess(res, phase, 201);
+});
+
+export const updatePhase = asyncHandler(async (req: Request, res: Response) => {
+  sendSuccess(res, await programService.updatePhase(req.params.phaseId, req.body));
+});
+
+export const deletePhase = asyncHandler(async (req: Request, res: Response) => {
+  await programService.deletePhase(req.params.phaseId);
+  sendSuccess(res, { message: "Phase deleted" });
 });
 
 export const createWeek = asyncHandler(async (req: Request, res: Response) => {
@@ -34,7 +49,8 @@ export const updateWeek = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getWeek = asyncHandler(async (req: Request, res: Response) => {
-  sendSuccess(res, await programService.getWeekDetail(req.params.weekId));
+  const viewer = req.user ? { userId: req.user.userId, role: req.user.role } : undefined;
+  sendSuccess(res, await programService.getWeekDetail(req.params.weekId, viewer));
 });
 
 export const setWeekLock = asyncHandler(async (req: Request, res: Response) => {

@@ -1,5 +1,5 @@
 import { apiClient } from "./client";
-import type { ApiSuccess, ResearchAnswer, ResearchQuestion, Resource, Topic, TrainingProgram, Week } from "@/types";
+import type { ApiSuccess, Phase, ResearchAnswer, ResearchQuestion, Resource, Topic, TrainingProgram, Week } from "@/types";
 
 export async function listPrograms() {
   const { data } = await apiClient.get<ApiSuccess<TrainingProgram[]>>("/programs");
@@ -28,7 +28,29 @@ export async function updateProgram(id: string, input: Partial<CreateProgramInpu
   return data.data;
 }
 
+export interface CreatePhaseInput {
+  phaseNumber: number;
+  title: string;
+  description?: string;
+  order?: number;
+}
+
+export async function createPhase(programId: string, input: CreatePhaseInput) {
+  const { data } = await apiClient.post<ApiSuccess<Phase>>(`/programs/${programId}/phases`, input);
+  return data.data;
+}
+
+export async function updatePhase(phaseId: string, input: Partial<CreatePhaseInput>) {
+  const { data } = await apiClient.patch<ApiSuccess<Phase>>(`/programs/phases/${phaseId}`, input);
+  return data.data;
+}
+
+export async function deletePhase(phaseId: string) {
+  await apiClient.delete(`/programs/phases/${phaseId}`);
+}
+
 export interface CreateWeekInput {
+  phaseId: string;
   weekNumber: number;
   title: string;
   description: string;

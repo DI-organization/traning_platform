@@ -3,7 +3,13 @@ import { Role } from "@prisma/client";
 import * as programController from "../controllers/program.controller";
 import { authenticate, authorize } from "../middleware/auth.middleware";
 import { validate } from "../middleware/validate.middleware";
-import { createProgramSchema, updateProgramSchema, createWeekSchema } from "../schemas/program.schema";
+import {
+  createProgramSchema,
+  updateProgramSchema,
+  createWeekSchema,
+  createPhaseSchema,
+  updatePhaseSchema,
+} from "../schemas/program.schema";
 
 const router = Router();
 
@@ -111,5 +117,67 @@ router.patch("/:id", authorize(Role.TRAINER), validate(updateProgramSchema), pro
  *       409: { description: A week with this number already exists for the program }
  */
 router.post("/:programId/weeks", authorize(Role.TRAINER), validate(createWeekSchema), programController.createWeek);
+
+/**
+ * @openapi
+ * /programs/{programId}/phases:
+ *   post:
+ *     tags: [Programs]
+ *     summary: Add a phase to a program (trainer only)
+ *     description: A phase groups a run of weeks under one track (e.g. "Phase 1 — Frontend Fundamentals").
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: programId
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [phaseNumber, title]
+ *             properties:
+ *               phaseNumber: { type: integer }
+ *               title: { type: string }
+ *               description: { type: string }
+ *               order: { type: integer, default: 0 }
+ *     responses:
+ *       201: { description: Phase created }
+ *       409: { description: A phase with this number already exists for the program }
+ */
+router.post("/:programId/phases", authorize(Role.TRAINER), validate(createPhaseSchema), programController.createPhase);
+
+/**
+ * @openapi
+ * /programs/phases/{phaseId}:
+ *   patch:
+ *     tags: [Programs]
+ *     summary: Update a phase (trainer only)
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: phaseId
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200: { description: Phase updated }
+ *       403: { description: Not a trainer }
+ *   delete:
+ *     tags: [Programs]
+ *     summary: Delete an empty phase (trainer only)
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: phaseId
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200: { description: Phase deleted }
+ *       400: { description: The phase still has weeks assigned to it }
+ */
+router.patch("/phases/:phaseId", authorize(Role.TRAINER), validate(updatePhaseSchema), programController.updatePhase);
+router.delete("/phases/:phaseId", authorize(Role.TRAINER), programController.deletePhase);
 
 export default router;

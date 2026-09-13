@@ -135,6 +135,7 @@ export interface TaskAssignment {
 export interface Week {
   id: string;
   programId: string;
+  phaseId: string;
   weekNumber: number;
   title: string;
   description: string;
@@ -151,6 +152,16 @@ export interface Week {
   researchQuestions: ResearchQuestion[];
 }
 
+export interface Phase {
+  id: string;
+  programId: string;
+  phaseNumber: number;
+  title: string;
+  description: string | null;
+  order: number;
+  weeks: Week[];
+}
+
 export interface TrainingProgram {
   id: string;
   title: string;
@@ -158,7 +169,7 @@ export interface TrainingProgram {
   totalWeeks: number;
   weekUnlockStrategy: WeekUnlockStrategy;
   isActive: boolean;
-  weeks?: Week[];
+  phases?: Phase[];
 }
 
 export interface GitHubRepositoryMeta {

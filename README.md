@@ -1,9 +1,11 @@
 # Training Management Platform
 
-A full-stack platform for running a 12-week self-learning software development
-training program. A trainer manages the curriculum, trainees and their progress;
-trainees work through weekly material, submit tasks backed by GitHub
-repositories/pull requests, and receive structured review, feedback and scores.
+A full-stack platform for running a self-learning software development
+training program, organized into phases made up of weeks. A trainer manages
+the curriculum, trainees and their progress; trainees work through weekly
+material — unlocked one week at a time, never all at once — submit tasks
+backed by GitHub repositories/pull requests, and receive structured review,
+feedback and scores.
 
 The goal isn't to track whether someone watched a video — it's to answer:
 **can this trainee actually work as a junior full-stack developer?** The
@@ -35,12 +37,16 @@ questions, problem solving and project delivery.
 
 ## Overview
 
-The platform manages a 12-week `TrainingProgram` made up of `Week`s. Each week
-has topics, resources, tasks, a weekly project and research questions. Trainers
-create trainee accounts, assign and manage that curriculum, and review
-submitted work. Trainees work through their current week, submit tasks backed
-by a GitHub repository/branch/PR, and track their own progress, feedback and
-scores.
+The platform manages a `TrainingProgram` made up of `Phase`s (e.g. "Frontend
+Fundamentals", "Backend & React Development"), each containing `Week`s. Week
+numbers don't have to be contiguous — they track the real cohort calendar,
+gaps and all. Each week has topics, resources, tasks, a weekly project and
+research questions, and is either locked or unlocked; a trainee only ever
+sees the weeks the trainer has unlocked so far, enforced server-side, not
+just hidden in the UI. Trainers create trainee accounts, assign and manage
+that curriculum, and review submitted work. Trainees work through their
+current week, submit tasks backed by a GitHub repository/branch/PR, and
+track their own progress, feedback and scores.
 
 ### Feature highlights
 
@@ -51,9 +57,14 @@ scores.
   task-difficulty performance)
 - Full trainee management: create, search, filter, activate/deactivate, and a
   detail view with progress, submissions, reviews and activity history
-- Program management: 12 weeks seeded from real curriculum data, fully
-  editable from the UI (topics, resources, tasks, research questions) — the
-  curriculum is data-driven, never hardcoded in the frontend
+- Program management: 3 phases / 16 weeks seeded from real curriculum data,
+  fully editable from the UI (phases, weeks, topics, resources, tasks,
+  research questions) — the curriculum is data-driven, never hardcoded in
+  the frontend
+- Per-week unlock, enforced server-side: a locked week's topics/tasks/
+  resources are stripped from the API response (not just hidden by the
+  frontend), and starting a task or submitting work for a locked week is
+  rejected with a 403
 - Task system with types (`LEARNING`, `CODING`, `PROBLEM_SOLVING`, `RESEARCH`,
   `PROJECT`), priorities, difficulty, points, deadlines and acceptance criteria
 - Submission workflow with attempt history: a trainee submits a repo/branch/PR
@@ -147,7 +158,7 @@ training-management-platform/
     prisma/
       schema.prisma
       seed.ts
-      seedData.ts       12-week curriculum content
+      seedData.ts       3-phase / 16-week curriculum content
     src/
       config/           env, prisma client, swagger
       controllers/
@@ -167,7 +178,8 @@ Key models and relations:
 
 ```
 User 1—N ProgramEnrollment, TaskAssignment, Submission, Notification, ActivityLog
-TrainingProgram 1—N Week
+TrainingProgram 1—N Phase
+Phase 1—N Week
 Week 1—N Topic, Resource, Task, ResearchQuestion
 Task 1—N TaskAssignment, Submission
 Submission 1—N SubmissionReview
@@ -190,6 +202,10 @@ Notable design decisions:
   per submission with a `fetchStatus` (`PENDING`/`OK`/`FAILED`/`NOT_FOUND`) so
   the UI can show "metadata unavailable" without ever blocking the submission
   itself.
+- **`Phase`** groups a run of weeks under one track (e.g. "Frontend
+  Fundamentals"). `Week.weekNumber` is intentionally not required to be
+  contiguous across the program — it mirrors the real cohort calendar,
+  including gaps for breaks/assessment weeks that aren't tracked here.
 - Enums are used throughout (`Role`, `TaskStatus`-equivalents, `TaskType`,
   `TaskPriority`, `TaskDifficulty`, `SubmissionStatus`, `ReviewDecision`,
   `NotificationType`, `ActivityType`, `ResourceType`, `WeekUnlockStrategy`).
@@ -383,10 +399,10 @@ Seeded by `server/prisma/seed.ts` (development-only credentials):
 | Role | Email | Password |
 |---|---|---|
 | Trainer | `trainer@example.com` | `Password123!` |
-| Trainee | `trainee1@example.com` (Ahmad, week 4) | `Password123!` |
+| Trainee | `trainee1@example.com` (Ahmad, week 12) | `Password123!` |
 | Trainee | `trainee2@example.com` (Sara, week 2) | `Password123!` |
 
-The seed populates the full 12-week curriculum (topics, resources, tasks,
+The seed populates the full 3-phase / 16-week curriculum (topics, resources, tasks,
 problem-solving tasks, research questions, weekly projects), enrollments,
 a realistic mix of approved/pending/in-progress task assignments and
 submissions with reviews and evaluations, notifications, and activity log
@@ -424,6 +440,9 @@ These are enforced in the service layer, not just the UI:
 15. Every protected backend route verifies authentication and role
     server-side (`authenticate`/`authorize` middleware) — frontend route
     guards are a UX convenience, not the security boundary.
+16. A trainee never receives a locked week's topics/tasks/resources from any
+    endpoint (not just the dedicated week route), and cannot start a task or
+    submit work for a task in a locked week, even with a direct API call.
 
 ## Known Limitations / Next Steps
 

@@ -18,7 +18,7 @@ describe("Submission workflow", () => {
     const programs = await request(app).get("/api/programs").set("Authorization", `Bearer ${trainerToken}`);
     const programId = programs.body.data[0].id;
     const program = await request(app).get(`/api/programs/${programId}`).set("Authorization", `Bearer ${trainerToken}`);
-    const weekId = program.body.data.weeks[0].id;
+    const weekId = program.body.data.phases[0].weeks[0].id;
 
     const taskRes = await request(app)
       .post("/api/tasks")

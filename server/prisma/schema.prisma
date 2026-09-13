@@ -163,8 +163,25 @@ model TrainingProgram {
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
 
+  phases              Phase[]
   weeks               Week[]
   enrollments         ProgramEnrollment[]
+}
+
+model Phase {
+  id          String          @id @default(uuid())
+  programId   String
+  program     TrainingProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  phaseNumber Int
+  title       String
+  description String?
+  order       Int             @default(0)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  weeks       Week[]
+
+  @@unique([programId, phaseNumber])
 }
 
 model ProgramEnrollment {
@@ -186,6 +203,8 @@ model Week {
   id                      String   @id @default(uuid())
   programId               String
   program                 TrainingProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  phaseId                 String
+  phase                   Phase    @relation(fields: [phaseId], references: [id], onDelete: Cascade)
   weekNumber              Int
   title                   String
   description             String
@@ -205,6 +224,7 @@ model Week {
   researchQuestions       ResearchQuestion[]
 
   @@unique([programId, weekNumber])
+  @@index([phaseId])
 }
 
 model Topic {

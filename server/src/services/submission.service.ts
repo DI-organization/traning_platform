@@ -20,6 +20,7 @@ interface SubmissionInput {
 export async function createSubmission(userId: string, input: SubmissionInput) {
   const task = await prisma.task.findUnique({ where: { id: input.taskId }, include: { week: true } });
   if (!task) throw ApiError.notFound("Task not found");
+  if (task.week.isLocked) throw ApiError.forbidden("This week is not unlocked yet", "WEEK_LOCKED");
 
   const latest = await prisma.submission.findFirst({
     where: { taskId: input.taskId, userId },

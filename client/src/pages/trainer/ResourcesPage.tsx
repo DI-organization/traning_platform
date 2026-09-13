@@ -23,7 +23,10 @@ export default function TrainerResourcesPage() {
   const [weekFilter, setWeekFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
 
-  const weeks = useMemo(() => [...(program?.weeks ?? [])].sort((a, b) => a.weekNumber - b.weekNumber), [program]);
+  const weeks = useMemo(
+    () => [...(program?.phases?.flatMap((p) => p.weeks) ?? [])].sort((a, b) => a.weekNumber - b.weekNumber),
+    [program]
+  );
 
   const resources = useMemo(() => {
     return weeks

@@ -43,6 +43,23 @@ export function useUpdateProgram() {
   });
 }
 
+export function useCreatePhase(programId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: programsApi.CreatePhaseInput) => programsApi.createPhase(programId, input),
+    onSuccess: () => invalidateProgramTree(queryClient, programId),
+  });
+}
+
+export function useUpdatePhase() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ phaseId, input }: { phaseId: string; input: Partial<programsApi.CreatePhaseInput> }) =>
+      programsApi.updatePhase(phaseId, input),
+    onSuccess: (data) => invalidateProgramTree(queryClient, data.programId),
+  });
+}
+
 export function useCreateWeek(programId: string) {
   const queryClient = useQueryClient();
   return useMutation({

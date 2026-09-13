@@ -27,7 +27,7 @@ export default function TraineeDashboardPage() {
   const { data: notifData } = useNotifications();
 
   const currentWeek = useMemo(
-    () => program?.weeks?.find((w) => w.weekNumber === profile?.enrollment?.currentWeek),
+    () => program?.phases?.flatMap((p) => p.weeks).find((w) => w.weekNumber === profile?.enrollment?.currentWeek),
     [program, profile]
   );
 
