@@ -74,12 +74,20 @@ track their own progress, feedback and scores.
   (nothing is ever overwritten)
 - GitHub integration: repository and pull request metadata fetched from the
   public GitHub API (optional token for higher rate limits), with graceful
-  degradation — GitHub being down never blocks a submission
+  degradation — GitHub being down never blocks a submission — plus a live
+  repository preview (name, stars, forks) as a trainee types the URL into
+  the submission form
 - Evaluation: 9-category scoring (task completion, functionality, code
   quality, architecture, git usage, problem solving, documentation, testing,
   technical understanding) rolled into a weighted total score
 - Progress tracking at task/week/program level, computed strictly from
   `APPROVED` task assignments (never from "opened" or "started")
+- An hourly scheduled job (`node-cron`) flags overdue task assignments and
+  sends "deadline tomorrow" / "task overdue" notifications — without it,
+  `TaskAssignment.status` would never actually become `OVERDUE` on its own
+- A trainer-created trainee account starts with a temporary password and
+  `mustChangePassword: true`; the trainee is blocked behind a full-screen
+  "set a new password" gate (not a dismissible banner) until they change it
 - Notifications and an activity log feeding both the trainer dashboard and
   each trainee's own history
 - i18n with English and Arabic (RTL), backed by structured JSON translation
@@ -365,6 +373,14 @@ submission, rejecting a duplicate pending submission, blocking a trainee from
 reviewing their own work, requesting changes, resubmission creating a new
 attempt, and approval with an evaluation score.
 
+Frontend tests (Vitest + React Testing Library) cover the two most
+business-critical flows — logging in and submitting a task for review:
+
+```bash
+cd client
+npm test
+```
+
 ## Build
 
 ```bash
@@ -434,7 +450,7 @@ These are enforced in the service layer, not just the UI:
    ever written from the trainer-only review endpoint).
 9. Only `APPROVED` task assignments count toward completed progress.
 10. Overdue status is computed from `dueDate` vs. completion state, not
-    manually set.
+    manually set — enforced by an hourly scheduled job, not just at read time.
 11. Deactivated (`isActive: false`) trainees cannot log in.
 12. The curriculum UI is entirely data-driven from the database — nothing is
     hardcoded in frontend components.
@@ -446,6 +462,9 @@ These are enforced in the service layer, not just the UI:
 16. A trainee never receives a locked week's topics/tasks/resources from any
     endpoint (not just the dedicated week route), and cannot start a task or
     submit work for a task in a locked week, even with a direct API call.
+17. A trainer-created trainee account cannot access anything until it sets
+    its own password — a temporary credential can never be used as a
+    permanent one.
 
 ## Known Limitations / Next Steps
 
@@ -461,10 +480,13 @@ lighter-weight given scope, and are the natural next steps:
   curriculum content (task titles/descriptions, trainer feedback text) is
   intentionally left in English since it's database data, not UI chrome.
 - **Frontend automated tests**: backend business logic has full Vitest
-  coverage; frontend testing was deprioritized in favor of manual
-  browser-verified coverage of every golden-path flow (auth, program/task
-  management, submission + review workflow, analytics) per the brief's
-  guidance to prioritize business-critical behavior over coverage percentage.
+  coverage; the frontend has targeted Vitest + React Testing Library
+  coverage of its two most critical flows (login, task submission) rather
+  than exhaustive coverage, per the brief's guidance to prioritize
+  business-critical behavior over coverage percentage. Every other page was
+  manually browser-verified across the golden paths (auth, program/task
+  management, submission + review workflow, analytics) and at mobile/tablet
+  viewport widths.
 - **GitHub OAuth / webhooks / automatic status sync**: intentionally not
   implemented (see [GitHub Integration](#github-integration)) — the schema
   and service boundary are designed so these can be added later without

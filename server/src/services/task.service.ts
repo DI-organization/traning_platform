@@ -173,13 +173,3 @@ export async function updateAssignmentStatus(taskId: string, userId: string, sta
   });
 }
 
-export async function markOverdueAssignments() {
-  const now = new Date();
-  return prisma.taskAssignment.updateMany({
-    where: {
-      status: { in: ["NOT_STARTED", "IN_PROGRESS"] },
-      task: { dueDate: { lt: now } },
-    },
-    data: { status: "OVERDUE" },
-  });
-}

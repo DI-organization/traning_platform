@@ -24,6 +24,6 @@ export const me = asyncHandler(async (req: Request, res: Response) => {
 export const changePassword = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user) throw ApiError.unauthorized();
   const { currentPassword, newPassword } = req.body;
-  await authService.changePassword(req.user.userId, currentPassword, newPassword);
-  sendSuccess(res, { message: "Password updated" });
+  const user = await authService.changePassword(req.user.userId, currentPassword, newPassword);
+  sendSuccess(res, user);
 });

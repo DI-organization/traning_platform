@@ -51,7 +51,8 @@ export default function TraineeProfilePage() {
 
   const changePassword = useMutation({
     mutationFn: (values: { currentPassword: string; newPassword: string }) => authApi.changePassword(values.currentPassword, values.newPassword),
-    onSuccess: () => {
+    onSuccess: (updated) => {
+      setUser(updated);
       toast.success(t("profile:password.changed"));
       resetPassword();
     },

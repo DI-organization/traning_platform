@@ -2,6 +2,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { useCurrentUser } from "@/hooks/useAuth";
+import { ForcePasswordChangeGate } from "@/components/common/ForcePasswordChangeGate";
 import type { Role } from "@/types";
 
 interface ProtectedRouteProps {
@@ -27,6 +28,10 @@ export function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
 
   if (isError) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (storedUser?.mustChangePassword) {
+    return <ForcePasswordChangeGate />;
   }
 
   const role = storedUser?.role;

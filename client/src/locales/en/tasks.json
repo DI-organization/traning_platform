@@ -38,6 +38,11 @@
     "notesPlaceholder": "Anything the trainer should know...",
     "urlRequired": "Provide at least a repository URL or a pull request URL",
     "submissionUpdated": "Submission updated",
-    "submissionCreated": "Work submitted for review"
+    "submissionCreated": "Work submitted for review",
+    "githubPreview": {
+      "checking": "Checking repository...",
+      "notFound": "Repository not found — double check the URL.",
+      "unavailable": "Could not verify the repository right now — this won't block your submission."
+    }
   }
 }

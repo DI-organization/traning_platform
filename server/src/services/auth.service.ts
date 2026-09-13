@@ -41,7 +41,7 @@ export async function changePassword(userId: string, currentPassword: string, ne
     throw ApiError.badRequest("Current password is incorrect", "INVALID_PASSWORD");
   }
   const passwordHash = await hashPassword(newPassword);
-  await prisma.user.update({ where: { id: userId }, data: { passwordHash } });
+  return getMe((await prisma.user.update({ where: { id: userId }, data: { passwordHash, mustChangePassword: false } })).id);
 }
 
 export async function getMe(userId: string) {
@@ -57,6 +57,7 @@ export async function getMe(userId: string) {
       phone: true,
       githubUsername: true,
       isActive: true,
+      mustChangePassword: true,
       lastLoginAt: true,
       createdAt: true,
       updatedAt: true,

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, Clock, Coins, Loader2, PlayCircle } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Clock, Coins, GitFork, Github, Loader2, PlayCircle, Star } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +16,7 @@ import { StatusBadge, PriorityBadge } from "@/components/common/StatusBadge";
 import { useTask } from "@/hooks/useTasks";
 import { useStartTask } from "@/hooks/useTasks";
 import { useCreateSubmission, useUpdateSubmission } from "@/hooks/useSubmissions";
+import { useGithubRepoPreview } from "@/hooks/useGithub";
 import { useAuthStore } from "@/store/authStore";
 import { formatDate, formatRelativeTime } from "@/lib/format";
 import { getErrorMessage } from "@/api/client";
@@ -178,6 +179,7 @@ export default function TraineeTaskDetailPage() {
                 <div className="space-y-1.5">
                   <Label>{t("tasks:detail.repositoryUrl")}</Label>
                   <Input placeholder="https://github.com/you/project" value={form.repositoryUrl} onChange={(e) => setForm({ ...form, repositoryUrl: e.target.value })} />
+                  <GithubRepoPreview url={form.repositoryUrl} />
                 </div>
                 <div className="space-y-1.5">
                   <Label>{t("tasks:detail.branch")}</Label>
@@ -204,6 +206,42 @@ export default function TraineeTaskDetailPage() {
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function GithubRepoPreview({ url }: { url: string }) {
+  const { t } = useTranslation("tasks");
+  const { data, isFetching, isPlausibleUrl } = useGithubRepoPreview(url);
+
+  if (!isPlausibleUrl) return null;
+
+  if (isFetching) {
+    return (
+      <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <Loader2 className="h-3 w-3 animate-spin" /> {t("detail.githubPreview.checking")}
+      </p>
+    );
+  }
+
+  if (!data || data.status === "FAILED") {
+    return <p className="text-xs text-muted-foreground">{t("detail.githubPreview.unavailable")}</p>;
+  }
+
+  if (data.status === "NOT_FOUND") {
+    return (
+      <p className="flex items-center gap-1.5 text-xs text-destructive">
+        <AlertTriangle className="h-3 w-3" /> {t("detail.githubPreview.notFound")}
+      </p>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2 rounded-md border bg-muted/40 px-2.5 py-1.5 text-xs">
+      <Github className="h-3.5 w-3.5 shrink-0" />
+      <span className="truncate font-medium">{data.owner}/{data.repo}</span>
+      <span className="flex shrink-0 items-center gap-1 text-muted-foreground"><Star className="h-3 w-3" /> {data.stars ?? 0}</span>
+      <span className="flex shrink-0 items-center gap-1 text-muted-foreground"><GitFork className="h-3 w-3" /> {data.forks ?? 0}</span>
     </div>
   );
 }

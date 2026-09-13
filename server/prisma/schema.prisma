@@ -120,6 +120,7 @@ model User {
   phone             String?
   githubUsername    String?
   isActive          Boolean   @default(true)
+  mustChangePassword Boolean  @default(false)
   lastLoginAt       DateTime?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt

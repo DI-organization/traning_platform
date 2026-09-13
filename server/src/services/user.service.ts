@@ -16,6 +16,7 @@ export const safeUserSelect = {
   phone: true,
   githubUsername: true,
   isActive: true,
+  mustChangePassword: true,
   lastLoginAt: true,
   createdAt: true,
   updatedAt: true,
@@ -50,6 +51,7 @@ export async function createTrainee(input: CreateTraineeInput) {
       email: input.email.toLowerCase(),
       passwordHash,
       role: Role.TRAINEE,
+      mustChangePassword: true,
       phone: input.phone,
       githubUsername: input.githubUsername,
       ...(program

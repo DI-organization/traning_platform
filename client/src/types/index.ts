@@ -37,6 +37,7 @@ export interface User {
   phone: string | null;
   githubUsername: string | null;
   isActive: boolean;
+  mustChangePassword: boolean;
   lastLoginAt: string | null;
   createdAt: string;
   updatedAt: string;

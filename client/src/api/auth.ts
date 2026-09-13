@@ -16,5 +16,6 @@ export async function getMe() {
 }
 
 export async function changePassword(currentPassword: string, newPassword: string) {
-  await apiClient.patch("/auth/change-password", { currentPassword, newPassword });
+  const { data } = await apiClient.patch<ApiSuccess<User>>("/auth/change-password", { currentPassword, newPassword });
+  return data.data;
 }
