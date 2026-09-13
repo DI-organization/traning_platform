@@ -9,10 +9,107 @@ const router = Router();
 
 router.use(authenticate);
 
+/**
+ * @openapi
+ * /programs:
+ *   get:
+ *     tags: [Programs]
+ *     summary: List all training programs
+ *     security: [{ bearerAuth: [] }]
+ *     responses:
+ *       200: { description: List of training programs }
+ *   post:
+ *     tags: [Programs]
+ *     summary: Create a training program (trainer only)
+ *     security: [{ bearerAuth: [] }]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [title, description]
+ *             properties:
+ *               title: { type: string }
+ *               description: { type: string }
+ *               totalWeeks: { type: integer, default: 12 }
+ *               weekUnlockStrategy: { type: string, enum: [MANUAL, AUTOMATIC_BY_DATE] }
+ *     responses:
+ *       201: { description: Program created }
+ *       403: { description: Not a trainer }
+ */
 router.get("/", programController.listPrograms);
 router.post("/", authorize(Role.TRAINER), validate(createProgramSchema), programController.createProgram);
+
+/**
+ * @openapi
+ * /programs/{id}:
+ *   get:
+ *     tags: [Programs]
+ *     summary: Get a program with all of its weeks, topics, resources, tasks and research questions
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200: { description: Full program tree }
+ *       404: { description: Program not found }
+ *   patch:
+ *     tags: [Programs]
+ *     summary: Update program settings (trainer only)
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title: { type: string }
+ *               description: { type: string }
+ *               weekUnlockStrategy: { type: string, enum: [MANUAL, AUTOMATIC_BY_DATE] }
+ *               isActive: { type: boolean }
+ *     responses:
+ *       200: { description: Program updated }
+ *       403: { description: Not a trainer }
+ */
 router.get("/:id", programController.getProgram);
 router.patch("/:id", authorize(Role.TRAINER), validate(updateProgramSchema), programController.updateProgram);
+
+/**
+ * @openapi
+ * /programs/{programId}/weeks:
+ *   post:
+ *     tags: [Programs]
+ *     summary: Add a new week to a program (trainer only)
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: programId
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [weekNumber, title, description]
+ *             properties:
+ *               weekNumber: { type: integer }
+ *               title: { type: string }
+ *               description: { type: string }
+ *               objectives: { type: array, items: { type: string } }
+ *     responses:
+ *       201: { description: Week created }
+ *       409: { description: A week with this number already exists for the program }
+ */
 router.post("/:programId/weeks", authorize(Role.TRAINER), validate(createWeekSchema), programController.createWeek);
 
 export default router;
