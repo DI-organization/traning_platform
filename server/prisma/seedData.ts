@@ -47,28 +47,36 @@ export interface SeedPhase {
 
 const DOC = ResourceType.DOCUMENTATION;
 
+// Each phase is exactly 4 weeks (one "training month"), so the whole
+// program runs exactly 12 weeks / 3 months. The real cohort curriculum this
+// is based on ran the same content over more (non-contiguous) calendar
+// weeks — here, weeks that were lighter on new material are folded into
+// the same week as an adjacent one so nothing from the source material is
+// dropped, just regrouped onto a clean 1–12 week numbering.
 export const phasesData: SeedPhase[] = [
   // ─────────────────────────────────────────────────────────────────────
-  // Phase 1 — Frontend Fundamentals (Weeks 1–7)
+  // Phase 1 — Frontend Fundamentals (Weeks 1–4)
   // ─────────────────────────────────────────────────────────────────────
   {
     phaseNumber: 1,
     title: "Frontend Fundamentals",
     description:
-      "Core JavaScript, the command line and Git, then HTML/CSS and the DOM — building up to a first solo project.",
+      "Core JavaScript, the command line and Git, then HTML/CSS and the DOM — building up to two solo projects.",
     weeks: [
       {
         weekNumber: 1,
-        title: "Introduction to JS, the Command Line & Git",
-        description: "Programming fundamentals, JavaScript basics, working from the command line, and version control with Git.",
+        title: "JavaScript Fundamentals",
+        description:
+          "Programming fundamentals, JavaScript basics, the command line and Git, then scope, arrays and objects.",
         objectives: [
           "Write and run basic JavaScript programs",
           "Navigate and operate confidently from the command line",
           "Initialize a Git repository, commit and push to GitHub",
-          "Define and call functions",
-          "Write conditional logic",
+          "Define and call functions, and write conditional logic",
+          "Understand function/block scope at a basic level",
+          "Manipulate arrays and model data with objects",
         ],
-        topics: ["Introduction To JS", "Command Line & GIT", "Functions", "Conditionals"],
+        topics: ["Introduction To JS", "Command Line & GIT", "Functions", "Conditionals", "Scopes", "Arrays", "Objects"],
         resources: [
           {
             title: "MDN — JavaScript Guide",
@@ -88,40 +96,6 @@ export const phasesData: SeedPhase[] = [
             estimatedMinutes: 45,
             topic: "Command Line & GIT",
           },
-        ],
-        tasks: [
-          {
-            code: "JS-001",
-            title: "Variables & Conditionals Practice",
-            description: "Small warm-up exercises covering variables, operators and conditional logic.",
-            type: TaskType.CODING,
-            priority: TaskPriority.MEDIUM,
-            difficulty: TaskDifficulty.EASY,
-            points: 10,
-            estimatedHours: 1.5,
-            instructions:
-              "Write a few small functions: classify a number as positive/negative/zero, compute a letter grade from a score, and check if a year is a leap year. Commit your work with clear, incremental Git commits.",
-            acceptanceCriteria: [
-              "Each function handles its edge cases (0, negative numbers, boundary scores)",
-              "At least 3 separate, meaningful Git commits",
-              "Pushed to a public GitHub repository",
-            ],
-          },
-        ],
-        researchQuestions: ["What is the difference between var, let and const?"],
-        submissionRequirements: ["Public GitHub repository URL"],
-      },
-      {
-        weekNumber: 2,
-        title: "Scope, Arrays & Objects",
-        description: "How scope works in JavaScript, and the two core data structures: arrays and objects.",
-        objectives: [
-          "Understand function scope, block scope and closures at a basic level",
-          "Manipulate arrays with core methods",
-          "Model data with objects",
-        ],
-        topics: ["Scopes", "Arrays", "Objects"],
-        resources: [
           {
             title: "MDN — Arrays",
             description: "Reference for array creation and manipulation.",
@@ -143,6 +117,23 @@ export const phasesData: SeedPhase[] = [
         ],
         tasks: [
           {
+            code: "JS-001",
+            title: "Variables & Conditionals Practice",
+            description: "Small warm-up exercises covering variables, operators and conditional logic.",
+            type: TaskType.CODING,
+            priority: TaskPriority.MEDIUM,
+            difficulty: TaskDifficulty.EASY,
+            points: 10,
+            estimatedHours: 1.5,
+            instructions:
+              "Write a few small functions: classify a number as positive/negative/zero, compute a letter grade from a score, and check if a year is a leap year. Commit your work with clear, incremental Git commits.",
+            acceptanceCriteria: [
+              "Each function handles its edge cases (0, negative numbers, boundary scores)",
+              "At least 3 separate, meaningful Git commits",
+              "Pushed to a public GitHub repository",
+            ],
+          },
+          {
             code: "JS-002",
             title: "Array & Object Manipulation",
             description: "Practice working with arrays of objects — a very common real-world shape.",
@@ -160,19 +151,21 @@ export const phasesData: SeedPhase[] = [
             ],
           },
         ],
-        researchQuestions: [],
+        researchQuestions: ["What is the difference between var, let and const?"],
         submissionRequirements: ["Public GitHub repository URL"],
       },
       {
-        weekNumber: 3,
-        title: "Iteration & Recursion",
-        description: "Loops in depth, then solving problems recursively.",
+        weekNumber: 2,
+        title: "Iteration, Recursion, HOF & OOP",
+        description:
+          "Loops in depth, solving problems recursively, callbacks and higher-order functions, and object-oriented programming.",
         objectives: [
           "Choose the right loop construct for a problem",
           "Trace and write recursive functions",
-          "Recognize when recursion is (and isn't) the right tool",
+          "Write and use callback functions and higher-order functions",
+          "Model problems with classes and objects (OOP)",
         ],
-        topics: ["Iteration Part-1", "Iteration Part-2", "Recursion"],
+        topics: ["Iteration Part-1", "Iteration Part-2", "Recursion", "CB & HOF", "OOP"],
         resources: [
           {
             title: "MDN — Loops and iteration",
@@ -182,6 +175,15 @@ export const phasesData: SeedPhase[] = [
             isRequired: true,
             estimatedMinutes: 30,
             topic: "Iteration Part-1",
+          },
+          {
+            title: "MDN — Array.prototype methods",
+            description: "map, filter, reduce and other higher-order array methods.",
+            url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+            type: DOC,
+            isRequired: true,
+            estimatedMinutes: 45,
+            topic: "CB & HOF",
           },
         ],
         tasks: [
@@ -202,51 +204,6 @@ export const phasesData: SeedPhase[] = [
               "Pushed to GitHub",
             ],
           },
-        ],
-        researchQuestions: ["What is a base case, and what happens if a recursive function is missing one?"],
-        submissionRequirements: ["Public GitHub repository URL"],
-      },
-      {
-        weekNumber: 4,
-        title: "Higher-Order Functions, OOP & Intro to the Web",
-        description: "Callbacks and higher-order functions, object-oriented programming, then a first look at HTML and CSS.",
-        objectives: [
-          "Write and use callback functions and higher-order functions",
-          "Model problems with classes and objects (OOP)",
-          "Structure a page with semantic HTML",
-          "Style a page with basic CSS",
-        ],
-        topics: ["CB & HOF", "OOP", "CSS Introduction", "HTML"],
-        resources: [
-          {
-            title: "MDN — Array.prototype methods",
-            description: "map, filter, reduce and other higher-order array methods.",
-            url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
-            type: DOC,
-            isRequired: true,
-            estimatedMinutes: 45,
-            topic: "CB & HOF",
-          },
-          {
-            title: "MDN — HTML basics",
-            description: "Structuring content with HTML.",
-            url: "https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML",
-            type: DOC,
-            isRequired: true,
-            estimatedMinutes: 60,
-            topic: "HTML",
-          },
-          {
-            title: "MDN — CSS first steps",
-            description: "Getting started with CSS.",
-            url: "https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps",
-            type: DOC,
-            isRequired: true,
-            estimatedMinutes: 60,
-            topic: "CSS Introduction",
-          },
-        ],
-        tasks: [
           {
             code: "JS-004",
             title: "OOP & Higher-Order Functions",
@@ -265,22 +222,53 @@ export const phasesData: SeedPhase[] = [
             ],
           },
         ],
-        researchQuestions: ["What's the difference between a regular function and an arrow function with respect to `this`?"],
+        researchQuestions: [
+          "What is a base case, and what happens if a recursive function is missing one?",
+          "What's the difference between a regular function and an arrow function with respect to `this`?",
+        ],
         submissionRequirements: ["Public GitHub repository URL"],
       },
       {
-        weekNumber: 5,
-        title: "CSS Layouts, Positioning & the DOM",
-        description: "Deeper CSS (layout and positioning), design fundamentals, DOM manipulation, and starting your first project.",
+        weekNumber: 3,
+        title: "HTML/CSS, DOM, jQuery & Project 1",
+        description:
+          "A first look at HTML and CSS, deeper CSS (layout and positioning), design fundamentals, DOM manipulation, jQuery, and your first solo project.",
         objectives: [
-          "Build multi-column and flex/grid page layouts",
-          "Use CSS positioning correctly (relative, absolute, fixed, sticky)",
+          "Structure a page with semantic HTML and style it with CSS",
+          "Build multi-column and flex/grid page layouts, and position elements correctly",
           "Apply basic design fundamentals (spacing, hierarchy, contrast)",
-          "Read and manipulate the DOM from JavaScript",
-          "Scaffold a new project from scratch",
+          "Read and manipulate the DOM from JavaScript, including with jQuery",
+          "Scaffold and plan a new project from scratch",
         ],
-        topics: ["CSS Part-2 Page Layouts", "CSS Part-3 Position", "Design Fundamentals", "DOM Manipulation", "How To Start A Project"],
+        topics: [
+          "CSS Introduction",
+          "HTML",
+          "CSS Part-2 Page Layouts",
+          "CSS Part-3 Position",
+          "Design Fundamentals",
+          "DOM Manipulation",
+          "How To Start A Project",
+          "JQuery",
+        ],
         resources: [
+          {
+            title: "MDN — HTML basics",
+            description: "Structuring content with HTML.",
+            url: "https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML",
+            type: DOC,
+            isRequired: true,
+            estimatedMinutes: 60,
+            topic: "HTML",
+          },
+          {
+            title: "MDN — CSS first steps",
+            description: "Getting started with CSS.",
+            url: "https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps",
+            type: DOC,
+            isRequired: true,
+            estimatedMinutes: 60,
+            topic: "CSS Introduction",
+          },
           {
             title: "MDN — CSS layout",
             description: "Flexbox, Grid and page layout techniques.",
@@ -299,8 +287,29 @@ export const phasesData: SeedPhase[] = [
             estimatedMinutes: 45,
             topic: "DOM Manipulation",
           },
+          {
+            title: "jQuery Documentation",
+            description: "Official jQuery API documentation.",
+            url: "https://api.jquery.com/",
+            type: DOC,
+            isRequired: true,
+            estimatedMinutes: 30,
+            topic: "JQuery",
+          },
         ],
         tasks: [
+          {
+            code: "WEB-001",
+            title: "jQuery DOM Practice",
+            description: "Rebuild a small piece of DOM-manipulation UI using jQuery instead of vanilla JS.",
+            type: TaskType.CODING,
+            priority: TaskPriority.LOW,
+            difficulty: TaskDifficulty.EASY,
+            points: 6,
+            estimatedHours: 1,
+            instructions: "Build a simple to-do list (add/remove/toggle-complete items) using only jQuery for DOM manipulation and events.",
+            acceptanceCriteria: ["No vanilla querySelector/addEventListener used — jQuery only", "Pushed to GitHub"],
+          },
           {
             code: "PROJ-1",
             title: "Project 1",
@@ -327,41 +336,7 @@ export const phasesData: SeedPhase[] = [
         submissionRequirements: ["Public GitHub repository URL", "Project wiki/README describing the plan and features", "Live demo URL (optional)"],
       },
       {
-        weekNumber: 6,
-        title: "jQuery",
-        description: "Simplifying DOM manipulation and events with jQuery, while continuing Project 1.",
-        objectives: ["Select and manipulate DOM elements with jQuery", "Attach event handlers the jQuery way"],
-        topics: ["JQuery"],
-        resources: [
-          {
-            title: "jQuery Documentation",
-            description: "Official jQuery API documentation.",
-            url: "https://api.jquery.com/",
-            type: DOC,
-            isRequired: true,
-            estimatedMinutes: 30,
-            topic: "JQuery",
-          },
-        ],
-        tasks: [
-          {
-            code: "WEB-001",
-            title: "jQuery DOM Practice",
-            description: "Rebuild a small piece of DOM-manipulation UI using jQuery instead of vanilla JS.",
-            type: TaskType.CODING,
-            priority: TaskPriority.LOW,
-            difficulty: TaskDifficulty.EASY,
-            points: 6,
-            estimatedHours: 1,
-            instructions: "Build a simple to-do list (add/remove/toggle-complete items) using only jQuery for DOM manipulation and events.",
-            acceptanceCriteria: ["No vanilla querySelector/addEventListener used — jQuery only", "Pushed to GitHub"],
-          },
-        ],
-        researchQuestions: [],
-        submissionRequirements: [],
-      },
-      {
-        weekNumber: 7,
+        weekNumber: 4,
         title: "Project 2",
         description: "A second, more ambitious frontend project applying everything from this phase.",
         objectives: ["Independently plan and scope a small frontend application", "Apply HTML/CSS/JS and DOM skills without step-by-step guidance"],
@@ -397,7 +372,7 @@ export const phasesData: SeedPhase[] = [
   },
 
   // ─────────────────────────────────────────────────────────────────────
-  // Phase 2 — Backend & React Development (Weeks 9–13)
+  // Phase 2 — Backend & React Development (Weeks 5–8)
   // ─────────────────────────────────────────────────────────────────────
   {
     phaseNumber: 2,
@@ -405,15 +380,16 @@ export const phasesData: SeedPhase[] = [
     description: "Node/Express APIs, authentication, and building real UIs with React.",
     weeks: [
       {
-        weekNumber: 9,
-        title: "Intro to Backend Development",
-        description: "What a backend does, building REST APIs, and asynchronous JavaScript.",
+        weekNumber: 5,
+        title: "Backend Development & Express.js",
+        description: "What a backend does, building REST APIs, asynchronous JavaScript, and Express middleware.",
         objectives: [
           "Explain what a backend server does and how clients talk to it",
           "Design a basic REST API",
           "Use async/await and handle asynchronous errors",
+          "Build routes and controllers with Express, and write custom middleware",
         ],
-        topics: ["Backend Development", "APIs", "Asynchronous Programming"],
+        topics: ["Backend Development", "APIs", "Asynchronous Programming", "Express Middlewares"],
         resources: [
           {
             title: "Node.js Documentation",
@@ -433,6 +409,15 @@ export const phasesData: SeedPhase[] = [
             estimatedMinutes: 45,
             topic: "Asynchronous Programming",
           },
+          {
+            title: "Express Documentation",
+            description: "Official Express.js guide and API reference.",
+            url: "https://expressjs.com/en/guide/routing.html",
+            type: DOC,
+            isRequired: true,
+            estimatedMinutes: 60,
+            topic: "Express Middlewares",
+          },
         ],
         tasks: [
           {
@@ -447,28 +432,6 @@ export const phasesData: SeedPhase[] = [
             instructions: "Write an async function that fetches from a public JSON API with proper try/catch error handling and a request timeout.",
             acceptanceCriteria: ["Handles network failure without crashing", "Uses async/await, not raw .then chains"],
           },
-        ],
-        researchQuestions: ["What is the JavaScript event loop, and why does it matter for a Node.js server?"],
-        submissionRequirements: ["Public GitHub repository URL"],
-      },
-      {
-        weekNumber: 10,
-        title: "Express.js",
-        description: "Building REST APIs with Express and writing custom middleware.",
-        objectives: ["Build routes and controllers with Express", "Write and apply custom middleware"],
-        topics: ["Express Middlewares"],
-        resources: [
-          {
-            title: "Express Documentation",
-            description: "Official Express.js guide and API reference.",
-            url: "https://expressjs.com/en/guide/routing.html",
-            type: DOC,
-            isRequired: true,
-            estimatedMinutes: 60,
-            topic: "Express Middlewares",
-          },
-        ],
-        tasks: [
           {
             code: "NODE-002",
             title: "Express Middleware Practice",
@@ -483,13 +446,13 @@ export const phasesData: SeedPhase[] = [
             acceptanceCriteria: ["Logging middleware runs on every request", "Errors are caught by a dedicated error-handling middleware, not left to crash the process"],
           },
         ],
-        researchQuestions: [],
+        researchQuestions: ["What is the JavaScript event loop, and why does it matter for a Node.js server?"],
         submissionRequirements: ["Public GitHub repository URL"],
       },
       {
-        weekNumber: 11,
-        title: "Authentication & Authorization",
-        description: "Securing an API with authentication and authorization, applied in Project 3.",
+        weekNumber: 6,
+        title: "Authentication, Authorization & Project 3",
+        description: "Securing an API with authentication and authorization, applied in a three-part project.",
         objectives: ["Implement password hashing and login with JWT", "Restrict routes by role"],
         topics: ["Authentication And Authorization"],
         resources: [
@@ -530,7 +493,7 @@ export const phasesData: SeedPhase[] = [
         submissionRequirements: ["Public GitHub repository URL", "Pull request URL", ".env.example included (no real secrets)"],
       },
       {
-        weekNumber: 12,
+        weekNumber: 7,
         title: "React Fundamentals",
         description: "Building UIs with React: components, hooks, and context.",
         objectives: ["Build components with props and state", "Use useState/useEffect correctly", "Share state across components with Context"],
@@ -564,8 +527,8 @@ export const phasesData: SeedPhase[] = [
         submissionRequirements: ["Public GitHub repository URL"],
       },
       {
-        weekNumber: 13,
-        title: "React Router & Redux",
+        weekNumber: 8,
+        title: "React Router, Redux & Project 4",
         description: "Client-side routing and global state management, applied in a solo project.",
         objectives: ["Set up multi-page navigation with React Router", "Manage global state with Redux"],
         topics: ["React Router", "Redux"],
@@ -619,7 +582,7 @@ export const phasesData: SeedPhase[] = [
   },
 
   // ─────────────────────────────────────────────────────────────────────
-  // Phase 3 — Databases, TypeScript & Team Projects (Weeks 16–18, 22)
+  // Phase 3 — Databases, TypeScript & Team Projects (Weeks 9–12)
   // ─────────────────────────────────────────────────────────────────────
   {
     phaseNumber: 3,
@@ -627,7 +590,7 @@ export const phasesData: SeedPhase[] = [
     description: "Relational databases, TypeScript, Next.js, working as a team on GitHub, and data structures & algorithms.",
     weeks: [
       {
-        weekNumber: 16,
+        weekNumber: 9,
         title: "PostgreSQL & Relational Databases",
         description: "Relational database design and SQL.",
         objectives: ["Design normalized relational tables", "Write SQL queries: CRUD, filtering, joins, aggregation"],
@@ -661,7 +624,7 @@ export const phasesData: SeedPhase[] = [
         submissionRequirements: ["Public GitHub repository URL with .sql files"],
       },
       {
-        weekNumber: 17,
+        weekNumber: 10,
         title: "TypeScript & Next.js",
         description: "Adding static types with TypeScript, and building full-stack React apps with Next.js.",
         objectives: [
@@ -708,7 +671,7 @@ export const phasesData: SeedPhase[] = [
         submissionRequirements: ["Public GitHub repository URL"],
       },
       {
-        weekNumber: 18,
+        weekNumber: 11,
         title: "Team Collaboration & Project 5",
         description: "Working as a team on GitHub, culminating in a team project.",
         objectives: ["Collaborate on GitHub using teams, branches and pull request review", "Deliver a project as part of a team"],
@@ -751,7 +714,7 @@ export const phasesData: SeedPhase[] = [
         submissionRequirements: ["Public GitHub repository URL (team repo)", "Project wiki/README", "Pull request URL(s)"],
       },
       {
-        weekNumber: 22,
+        weekNumber: 12,
         title: "Data Structures & Algorithms",
         description: "Core data structures and how to reason about algorithmic efficiency.",
         objectives: [

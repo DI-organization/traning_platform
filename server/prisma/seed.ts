@@ -5,7 +5,7 @@ import { phasesData } from "./seedData";
 const prisma = new PrismaClient();
 
 const DEMO_PASSWORD = "Password123!";
-const CURRENT_WEEK_AHMAD = 12;
+const CURRENT_WEEK_AHMAD = 8;
 const CURRENT_WEEK_SARA = 2;
 
 async function main() {
@@ -92,13 +92,11 @@ async function main() {
 
   const weekRecords: { weekNumber: number; id: string; taskIdsByCode: Record<string, string> }[] = [];
 
-  // Anchor the program so "today" falls inside week 12 (Ahmad's current week,
-  // the more advanced trainee): earlier weeks are fully in the past (due
-  // dates passed), week 12 is in progress, and later weeks are still ahead —
-  // so unstarted future tasks read as "pending", not "overdue". Week numbers
-  // are non-contiguous (matching the real cohort calendar, with gaps for
-  // breaks/assessment weeks not tracked here), so each week's dates are
-  // computed from its own weekNumber offset rather than its list position.
+  // Anchor the program so "today" falls inside week 8 (Ahmad's current
+  // week, the more advanced trainee, at the end of Phase 2): earlier weeks
+  // are fully in the past (due dates passed), week 8 is in progress, and
+  // Phase 3 (weeks 9-12) is still ahead — so unstarted future tasks read as
+  // "pending", not "overdue".
   const DAY_MS = 24 * 60 * 60 * 1000;
   const programStart = new Date(Date.now() - (CURRENT_WEEK_AHMAD - 1) * 7 * DAY_MS);
 
@@ -275,43 +273,37 @@ async function main() {
     phasesData.flatMap((p) => p.weeks.flatMap((w) => w.tasks.map((t) => [t.code, t] as const)))
   );
 
-  function firstTaskId(weekNumber: number): string | undefined {
-    const codes = Object.keys(byWeek(weekNumber).taskIdsByCode);
-    return codes[0] ? byWeek(weekNumber).taskIdsByCode[codes[0]] : undefined;
+  function taskCodesInWeek(weekNumber: number): string[] {
+    return Object.keys(byWeek(weekNumber).taskIdsByCode);
   }
 
-  // Trainee 1 (Ahmad, at week 12): every earlier week's task approved,
-  // week 12's task pending review — populates "Pending Reviews".
-  for (const weekNumber of [1, 2, 3, 4, 5, 6, 7, 9, 10, 11]) {
-    const taskId = firstTaskId(weekNumber);
-    if (!taskId) continue;
-    const code = Object.keys(byWeek(weekNumber).taskIdsByCode)[0];
-    const def = taskDefByCode.get(code)!;
-    await submitAndApprove(trainee1.id, taskId, def.difficulty, `ahmad-dev/${code.toLowerCase()}`);
+  async function approveAllTasksInWeek(userId: string, weekNumber: number, repoPrefix: string) {
+    for (const code of taskCodesInWeek(weekNumber)) {
+      const taskId = byWeek(weekNumber).taskIdsByCode[code];
+      const def = taskDefByCode.get(code)!;
+      await submitAndApprove(userId, taskId, def.difficulty, `${repoPrefix}/${code.toLowerCase()}`);
+    }
+  }
+
+  // Trainee 1 (Ahmad, at week 8, end of Phase 2): every earlier week's
+  // tasks approved, week 8's task pending review — populates "Pending Reviews".
+  for (const weekNumber of [1, 2, 3, 4, 5, 6, 7]) {
+    await approveAllTasksInWeek(trainee1.id, weekNumber, "ahmad-dev");
   }
   {
-    const taskId = firstTaskId(12)!;
-    const code = Object.keys(byWeek(12).taskIdsByCode)[0];
+    const code = taskCodesInWeek(8)[0];
+    const taskId = byWeek(8).taskIdsByCode[code];
     await submitPendingReview(trainee1.id, taskId, `ahmad-dev/${code.toLowerCase()}`);
   }
 
-  // Trainee 2 (Sara, at week 2): weeks 1-2 approved, week 3 pending review,
-  // week 4 in progress.
-  for (const weekNumber of [1, 2]) {
-    const taskId = firstTaskId(weekNumber);
-    if (!taskId) continue;
-    const code = Object.keys(byWeek(weekNumber).taskIdsByCode)[0];
-    const def = taskDefByCode.get(code)!;
-    await submitAndApprove(trainee2.id, taskId, def.difficulty, `sara-codes/${code.toLowerCase()}`);
-  }
+  // Trainee 2 (Sara, at week 2): week 1 fully approved, week 2 has one task
+  // pending review and the other in progress.
+  await approveAllTasksInWeek(trainee2.id, 1, "sara-codes");
   {
-    const taskId = firstTaskId(3)!;
-    const code = Object.keys(byWeek(3).taskIdsByCode)[0];
-    await submitPendingReview(trainee2.id, taskId, `sara-codes/${code.toLowerCase()}`);
-  }
-  {
-    const taskId = firstTaskId(4)!;
-    await markInProgress(trainee2.id, taskId);
+    const [firstCode, secondCode] = taskCodesInWeek(2);
+    const week2 = byWeek(2);
+    await submitPendingReview(trainee2.id, week2.taskIdsByCode[firstCode], `sara-codes/${firstCode.toLowerCase()}`);
+    if (secondCode) await markInProgress(trainee2.id, week2.taskIdsByCode[secondCode]);
   }
 
   // ── Sample research answers ──────────────────────────────────────────
@@ -336,14 +328,14 @@ async function main() {
       {
         userId: trainee1.id,
         title: "Submission received",
-        message: "Your React Hooks Practice submission is now awaiting trainer review.",
+        message: "Your Project 4 (Solo) submission is now awaiting trainer review.",
         type: "SUBMISSION_RECEIVED",
         isRead: false,
       },
       {
         userId: trainee1.id,
         title: "New week available",
-        message: "Week 12: React Fundamentals is now unlocked.",
+        message: "Week 8: React Router, Redux & Project 4 is now unlocked.",
         type: "WEEK_AVAILABLE",
         isRead: true,
       },
@@ -367,7 +359,7 @@ async function main() {
   // ── Activity log ─────────────────────────────────────────────────────
   await prisma.activityLog.createMany({
     data: [
-      { userId: trainee1.id, type: "WEEK_COMPLETED", description: "Ahmad completed Week 11: Authentication & Authorization" },
+      { userId: trainee1.id, type: "WEEK_COMPLETED", description: "Ahmad completed Week 7: React Fundamentals" },
       { userId: trainee2.id, type: "SUBMISSION_CREATED", description: "Sara submitted work for review" },
       { userId: trainer.id, type: "SUBMISSION_REVIEWED", description: "Trainer reviewed Ahmad's submission" },
     ],

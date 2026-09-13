@@ -38,9 +38,11 @@ questions, problem solving and project delivery.
 ## Overview
 
 The platform manages a `TrainingProgram` made up of `Phase`s (e.g. "Frontend
-Fundamentals", "Backend & React Development"), each containing `Week`s. Week
-numbers don't have to be contiguous — they track the real cohort calendar,
-gaps and all. Each week has topics, resources, tasks, a weekly project and
+Fundamentals", "Backend & React Development"), each containing `Week`s. The
+seeded program is exactly 3 phases of 4 weeks each — 12 weeks, 3 months —
+but `Week.weekNumber` doesn't have to be contiguous or evenly split across
+phases; that's a modeling choice for this data, not a schema constraint.
+Each week has topics, resources, tasks, a weekly project and
 research questions, and is either locked or unlocked; a trainee only ever
 sees the weeks the trainer has unlocked so far, enforced server-side, not
 just hidden in the UI. Trainers create trainee accounts, assign and manage
@@ -57,7 +59,7 @@ track their own progress, feedback and scores.
   task-difficulty performance)
 - Full trainee management: create, search, filter, activate/deactivate, and a
   detail view with progress, submissions, reviews and activity history
-- Program management: 3 phases / 16 weeks seeded from real curriculum data,
+- Program management: 3 phases (one training month each) / 12 weeks total — exactly 3 months — seeded from real curriculum data,
   fully editable from the UI (phases, weeks, topics, resources, tasks,
   research questions) — the curriculum is data-driven, never hardcoded in
   the frontend
@@ -158,7 +160,7 @@ training-management-platform/
     prisma/
       schema.prisma
       seed.ts
-      seedData.ts       3-phase / 16-week curriculum content
+      seedData.ts       3-phase / 12-week (4 weeks per phase) curriculum content
     src/
       config/           env, prisma client, swagger
       controllers/
@@ -203,9 +205,10 @@ Notable design decisions:
   the UI can show "metadata unavailable" without ever blocking the submission
   itself.
 - **`Phase`** groups a run of weeks under one track (e.g. "Frontend
-  Fundamentals"). `Week.weekNumber` is intentionally not required to be
-  contiguous across the program — it mirrors the real cohort calendar,
-  including gaps for breaks/assessment weeks that aren't tracked here.
+  Fundamentals"). `Week.weekNumber` is a plain integer scoped to the program
+  (`@@unique([programId, weekNumber])`) — nothing requires it to be
+  contiguous or evenly divided across phases, but the seeded program keeps
+  it simple: 3 phases, 4 weeks each, weeks 1-12.
 - Enums are used throughout (`Role`, `TaskStatus`-equivalents, `TaskType`,
   `TaskPriority`, `TaskDifficulty`, `SubmissionStatus`, `ReviewDecision`,
   `NotificationType`, `ActivityType`, `ResourceType`, `WeekUnlockStrategy`).
@@ -399,10 +402,10 @@ Seeded by `server/prisma/seed.ts` (development-only credentials):
 | Role | Email | Password |
 |---|---|---|
 | Trainer | `trainer@example.com` | `Password123!` |
-| Trainee | `trainee1@example.com` (Ahmad, week 12) | `Password123!` |
+| Trainee | `trainee1@example.com` (Ahmad, week 8) | `Password123!` |
 | Trainee | `trainee2@example.com` (Sara, week 2) | `Password123!` |
 
-The seed populates the full 3-phase / 16-week curriculum (topics, resources, tasks,
+The seed populates the full 3-phase, 12-week curriculum (topics, resources, tasks,
 problem-solving tasks, research questions, weekly projects), enrollments,
 a realistic mix of approved/pending/in-progress task assignments and
 submissions with reviews and evaluations, notifications, and activity log
