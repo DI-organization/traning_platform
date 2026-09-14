@@ -12,7 +12,7 @@ export default function App() {
         <BrowserRouter>
           <AppRouter />
         </BrowserRouter>
-        <Toaster position="top-right" richColors closeButton />
+        <Toaster theme="dark" position="top-right" richColors closeButton />
       </TooltipProvider>
     </QueryClientProvider>
   );

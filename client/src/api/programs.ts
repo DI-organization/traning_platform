@@ -82,8 +82,8 @@ export async function setWeekLock(weekId: string, isLocked: boolean) {
   return data.data;
 }
 
-export async function createTopic(weekId: string, title: string, order = 0) {
-  const { data } = await apiClient.post<ApiSuccess<Topic>>(`/weeks/${weekId}/topics`, { title, order });
+export async function createTopic(weekId: string, title: string, order = 0, content = "") {
+  const { data } = await apiClient.post<ApiSuccess<Topic>>(`/weeks/${weekId}/topics`, { title, order, content });
   return data.data;
 }
 

@@ -77,6 +77,33 @@ router.patch("/:weekId", authorize(Role.TRAINER), validate(updateWeekSchema), pr
  */
 router.patch("/:weekId/lock", authorize(Role.TRAINER), programController.setWeekLock);
 
+/**
+ * @openapi
+ * /weeks/{weekId}/topics:
+ *   post:
+ *     tags: [Weeks]
+ *     summary: Add a topic (lesson section) to a week (trainer only)
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: weekId
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [title]
+ *             properties:
+ *               title: { type: string }
+ *               content: { type: string, description: "Markdown lesson content" }
+ *               order: { type: integer, default: 0 }
+ *     responses:
+ *       201: { description: Topic created }
+ *       403: { description: Not a trainer }
+ */
 router.post("/:weekId/topics", authorize(Role.TRAINER), validate(createTopicSchema), programController.createTopic);
 router.delete("/:weekId/topics/:topicId", authorize(Role.TRAINER), programController.deleteTopic);
 

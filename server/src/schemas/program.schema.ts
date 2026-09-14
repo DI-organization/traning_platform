@@ -69,6 +69,7 @@ export const updateWeekSchema = z.object({
 export const createTopicSchema = z.object({
   body: z.object({
     title: z.string().min(1),
+    content: z.string().default(""),
     order: z.number().int().default(0),
   }),
 });

@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { MarkdownContent } from "@/components/common/MarkdownContent";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -403,20 +405,33 @@ function ResourcesTab({ weekId, resources }: { weekId: string; resources: import
 function TopicsTab({ weekId, topics }: { weekId: string; topics: import("@/types").Topic[] }) {
   const { t } = useTranslation(["program", "common"]);
   const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
   const createTopic = useCreateTopic(weekId);
   const deleteTopic = useDeleteTopic(weekId);
 
   return (
     <Card>
       <CardContent className="space-y-4 p-5">
-        <div className="flex gap-2">
+        <div className="space-y-2">
           <Input placeholder={t("program:trainer.week.newTopicPlaceholder")} value={title} onChange={(e) => setTitle(e.target.value)} />
+          <Textarea
+            rows={4}
+            placeholder={t("program:trainer.week.newTopicContentPlaceholder")}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
           <Button
             disabled={!title.trim() || createTopic.isPending}
             onClick={() =>
               createTopic.mutate(
-                { title, order: topics.length },
-                { onSuccess: () => setTitle(""), onError: (error) => toast.error(getErrorMessage(error)) }
+                { title, order: topics.length, content },
+                {
+                  onSuccess: () => {
+                    setTitle("");
+                    setContent("");
+                  },
+                  onError: (error) => toast.error(getErrorMessage(error)),
+                }
               )
             }
           >
@@ -426,16 +441,25 @@ function TopicsTab({ weekId, topics }: { weekId: string; topics: import("@/types
         {topics.length === 0 ? (
           <EmptyState className="border-0" title={t("program:trainer.week.noTopicsYet")} />
         ) : (
-          <div className="flex flex-wrap gap-2">
+          <Accordion type="multiple" className="w-full">
             {topics.map((topic) => (
-              <Badge key={topic.id} variant="secondary" className="gap-1 py-1.5">
-                {topic.title}
-                <button onClick={() => deleteTopic.mutate(topic.id)}>
-                  <Trash2 className="h-3 w-3 text-muted-foreground hover:text-destructive" />
-                </button>
-              </Badge>
+              <AccordionItem key={topic.id} value={topic.id}>
+                <div className="flex items-center gap-2">
+                  <AccordionTrigger className="flex-1">{topic.title}</AccordionTrigger>
+                  <button onClick={() => deleteTopic.mutate(topic.id)} className="shrink-0">
+                    <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                  </button>
+                </div>
+                <AccordionContent>
+                  {topic.content ? (
+                    <MarkdownContent content={topic.content} />
+                  ) : (
+                    <p className="text-sm text-muted-foreground">{t("program:trainee.week.noTopicContentYet")}</p>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
             ))}
-          </div>
+          </Accordion>
         )}
       </CardContent>
     </Card>

@@ -7,7 +7,7 @@ describe("GET /api/tasks", () => {
   let traineeToken: string;
 
   beforeAll(async () => {
-    trainerToken = await loginAs("trainer@example.com");
+    trainerToken = await loginAs("qa-trainer@example.com");
     traineeToken = await loginAs("trainee1@example.com");
   });
 

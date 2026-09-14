@@ -88,7 +88,8 @@ export function useSetWeekLock() {
 export function useCreateTopic(weekId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ title, order }: { title: string; order?: number }) => programsApi.createTopic(weekId, title, order),
+    mutationFn: ({ title, order, content }: { title: string; order?: number; content?: string }) =>
+      programsApi.createTopic(weekId, title, order, content),
     onSuccess: () => invalidateProgramTree(queryClient, undefined, weekId),
   });
 }

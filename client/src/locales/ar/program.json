@@ -65,6 +65,7 @@
       "resourceAddError": "تعذّر إضافة المصدر",
       "noResourcesYet": "لا توجد مصادر بعد",
       "newTopicPlaceholder": "عنوان موضوع جديد",
+      "newTopicContentPlaceholder": "محتوى الدرس (يدعم Markdown) — اختياري",
       "noTopicsYet": "لا توجد مواضيع بعد",
       "newQuestionPlaceholder": "سؤال بحث جديد",
       "noQuestionsYet": "لا توجد أسئلة بحث بعد"
@@ -82,6 +83,7 @@
       "back": "العودة إلى برنامجي",
       "objectives": "الأهداف",
       "topics": "المواضيع",
+      "noTopicContentYet": "لا يوجد محتوى مكتوب لهذا الموضوع بعد — راجع المصادر أدناه.",
       "resources": "المصادر",
       "noResourcesYet": "لا توجد مصادر بعد",
       "tasks": "المهام",

@@ -16,7 +16,7 @@ export function DashboardLayout({ role }: { role: Role }) {
   const breadcrumb = useBreadcrumb();
 
   return (
-    <div className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-background">
       <Sidebar role={role} />
       <div className="flex min-h-screen min-w-0 flex-1 flex-col">
         <Navbar breadcrumb={breadcrumb} />

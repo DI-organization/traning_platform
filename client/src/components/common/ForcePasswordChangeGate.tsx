@@ -49,19 +49,26 @@ export function ForcePasswordChangeGate() {
   });
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(ellipse 600px 500px at 20% 20%, hsl(var(--primary) / 0.28), transparent), radial-gradient(ellipse 500px 500px at 85% 80%, hsl(var(--gradient-end) / 0.22), transparent)",
+        }}
+      />
       <div className="absolute right-4 top-4">
         <LanguageSwitcher />
       </div>
-      <div className="w-full max-w-sm space-y-6">
-        <div className="flex flex-col items-center gap-2 text-center">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+      <div className="relative w-full max-w-sm space-y-6">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <div className="gradient-primary shadow-glow flex h-12 w-12 items-center justify-center rounded-2xl text-primary-foreground">
             <KeyRound className="h-6 w-6" />
           </div>
-          <h1 className="text-xl font-semibold">{t("common:app.name")}</h1>
+          <h1 className="text-xl font-semibold tracking-tight">{t("common:app.name")}</h1>
         </div>
 
-        <Card>
+        <Card className="shadow-elevated">
           <CardHeader>
             <CardTitle>{t("auth:forcePasswordChange.title")}</CardTitle>
             <CardDescription>{t("auth:forcePasswordChange.subtitle")}</CardDescription>

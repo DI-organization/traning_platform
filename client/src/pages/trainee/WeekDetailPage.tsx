@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { MarkdownContent } from "@/components/common/MarkdownContent";
 import { EmptyState } from "@/components/common/EmptyState";
 import { ErrorState } from "@/components/common/ErrorState";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -54,8 +56,34 @@ export default function TraineeWeekDetailPage() {
       {week.topics.length > 0 && (
         <Card>
           <CardHeader><CardTitle>{t("program:trainee.week.topics")}</CardTitle></CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            {week.topics.map((topic) => <Badge key={topic.id} variant="secondary">{topic.title}</Badge>)}
+          <CardContent>
+            <Accordion type="multiple" className="w-full">
+              {week.topics.map((topic) => {
+                const topicResources = week.resources.filter((r) => r.topic === topic.title);
+                return (
+                  <AccordionItem key={topic.id} value={topic.id}>
+                    <AccordionTrigger>{topic.title}</AccordionTrigger>
+                    <AccordionContent>
+                      {topic.content ? (
+                        <MarkdownContent content={topic.content} />
+                      ) : (
+                        <p className="text-sm text-muted-foreground">{t("program:trainee.week.noTopicContentYet")}</p>
+                      )}
+                      {topicResources.length > 0 && (
+                        <div className="mt-4 space-y-2 border-t pt-3">
+                          <p className="text-xs font-medium text-muted-foreground">{t("program:trainee.week.resources")}</p>
+                          {topicResources.map((r) => (
+                            <a key={r.id} href={r.url} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sm text-primary hover:underline">
+                              <ExternalLink className="h-3 w-3 shrink-0" /> {r.title}
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </AccordionContent>
+                  </AccordionItem>
+                );
+              })}
+            </Accordion>
           </CardContent>
         </Card>
       )}

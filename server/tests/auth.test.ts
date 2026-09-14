@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import request from "supertest";
 import { app } from "./helpers";
 
-const TRAINER_EMAIL = "trainer@example.com";
+const TRAINER_EMAIL = "qa-trainer@example.com";
 const TRAINEE_EMAIL = "trainee1@example.com";
 const PASSWORD = "Password123!";
 

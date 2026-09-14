@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-const SEED_ACCOUNT_EMAILS = ["trainer@example.com", "trainee1@example.com", "trainee2@example.com"];
+const SEED_ACCOUNT_EMAILS = ["qa-trainer@example.com", "trainee1@example.com", "trainee2@example.com"];
 
 /**
  * The test suite runs against the real configured DATABASE_URL (there is no

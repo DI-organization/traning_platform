@@ -22,7 +22,7 @@ export function Navbar({ breadcrumb }: { breadcrumb?: React.ReactNode }) {
   const settingsPath = user.role === "TRAINER" ? "/trainer/settings" : "/trainee/profile";
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b border-white/[0.06] bg-background/80 px-4 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
       <div className="flex items-center gap-3 overflow-hidden">
         <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(true)}>
           <Menu className="h-5 w-5" />
@@ -35,7 +35,7 @@ export function Navbar({ breadcrumb }: { breadcrumb?: React.ReactNode }) {
         <NotificationsDropdown />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="ml-1 flex items-center gap-2 rounded-full">
+            <button className="ms-1 flex items-center gap-2 rounded-full ring-offset-2 ring-offset-background transition-shadow hover:ring-2 hover:ring-primary/40">
               <Avatar>
                 <AvatarImage src={user.avatar ?? undefined} />
                 <AvatarFallback>{initials(user.firstName, user.lastName)}</AvatarFallback>

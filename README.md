@@ -396,14 +396,34 @@ the project has zero TypeScript errors across both packages.
 
 ## Deployment
 
-- **Backend**: deploy `server/` to any Node host (Render, Railway, Fly.io,
-  a VPS, etc). Run `npx prisma migrate deploy` against production
-  `DATABASE_URL` before starting, then `npm run build && npm start`. Set all
-  variables from `.env.example` in the host's environment/secrets manager.
-- **Frontend**: `npm run build` produces a static `client/dist/` bundle —
-  deploy it to any static host (Vercel, Netlify, Cloudflare Pages, S3 +
-  CDN, etc), setting `VITE_API_URL` to the deployed backend's URL at build
-  time.
+Free-tier recommendation for this stack: **Render** for the backend (a real
+Node process, needed since the daily maintenance job runs as an in-process
+`node-cron` schedule — a serverless platform would not keep that alive) and
+**Vercel** for the static frontend.
+
+- **Backend**: a `render.yaml` Blueprint at the repo root is already set up
+  (root dir `server/`, build `npm install && npm run build`, start
+  `npm start`, health check `/health`). On Render: New → Blueprint → pick
+  this repo → fill in the `sync: false` secrets (`DATABASE_URL`,
+  `JWT_SECRET`, `CLIENT_URL`, etc — see `.env.example`) in the dashboard.
+  Deploying to any other Node host (Railway, Fly.io, a VPS) works the same
+  way: `npm install && npm run build`, then `npm start`, with the same env
+  vars. Run `npx prisma migrate deploy` against production `DATABASE_URL`
+  before the first start if it's a fresh database.
+- **Frontend**: `client/vercel.json` adds the SPA rewrite React Router
+  needs. On Vercel: New Project → same repo → set **Root Directory** to
+  `client` → set `VITE_API_URL` to `https://<your-render-service>.onrender.com/api`
+  → Deploy. Any static host works the same way (Netlify, Cloudflare Pages —
+  they just need the equivalent SPA-fallback rewrite and the same env var).
+- After both are live, set the backend's `CLIENT_URL` to the deployed
+  frontend's real origin and redeploy it (CORS is locked to that single
+  origin, so this has to happen after you know the final Vercel URL).
+- Render's free web service plan spins down after ~15 minutes idle (the
+  next request cold-starts in 30–60s), and the in-process cron job only
+  fires while the service happens to be awake. Fine for a demo/internal
+  tool; if that ever matters, ping the `/health` endpoint on a schedule
+  (e.g. UptimeRobot's free tier) or move the maintenance job to Render's
+  separate free Cron Job service type.
 - **Database**: Neon is already a managed, production-ready Postgres host;
   no migration is needed to go from dev to prod beyond pointing at a
   separate Neon branch/project and running `prisma migrate deploy`.
@@ -417,9 +437,16 @@ Seeded by `server/prisma/seed.ts` (development-only credentials):
 
 | Role | Email | Password |
 |---|---|---|
-| Trainer | `trainer@example.com` | `Password123!` |
+| Trainer | `trainer@example.com` (default — see below) | `Password123!` |
 | Trainee | `trainee1@example.com` (Ahmad, week 8) | `Password123!` |
 | Trainee | `trainee2@example.com` (Sara, week 2) | `Password123!` |
+| Trainer (test fixture) | `qa-trainer@example.com` | `Password123!` |
+
+The trainer account's identity is overridable via `SEED_TRAINER_EMAIL` /
+`SEED_TRAINER_PASSWORD` in `server/.env` (never committed) — set these to seed
+your own real trainer login instead of the shared demo one. The test suite
+always logs in as the separate `qa-trainer@example.com` fixture account
+above, so it isn't affected either way.
 
 The seed populates the full 3-phase, 12-week curriculum (topics, resources, tasks,
 problem-solving tasks, research questions, weekly projects), enrollments,

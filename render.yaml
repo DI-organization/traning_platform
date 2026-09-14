@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: training-platform-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: SEED_TRAINER_EMAIL
+        sync: false
+      - key: SEED_TRAINER_PASSWORD
+        sync: false

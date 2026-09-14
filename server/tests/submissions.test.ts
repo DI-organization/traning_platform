@@ -9,7 +9,7 @@ describe("Submission workflow", () => {
   let traineeId: string;
 
   beforeAll(async () => {
-    trainerToken = await loginAs("trainer@example.com");
+    trainerToken = await loginAs("qa-trainer@example.com");
     traineeToken = await loginAs("trainee2@example.com");
 
     const me = await request(app).get("/api/auth/me").set("Authorization", `Bearer ${traineeToken}`);

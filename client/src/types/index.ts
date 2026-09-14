@@ -63,6 +63,7 @@ export interface Topic {
   id: string;
   weekId: string;
   title: string;
+  content: string;
   order: number;
 }
 

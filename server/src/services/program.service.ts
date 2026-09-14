@@ -167,10 +167,10 @@ export async function getWeekDetail(weekId: string, viewer?: Viewer) {
   return week;
 }
 
-export async function createTopic(weekId: string, title: string, order: number) {
+export async function createTopic(weekId: string, title: string, order: number, content = "") {
   const week = await prisma.week.findUnique({ where: { id: weekId } });
   if (!week) throw ApiError.notFound("Week not found");
-  return prisma.topic.create({ data: { weekId, title, order } });
+  return prisma.topic.create({ data: { weekId, title, content, order } });
 }
 
 export async function deleteTopic(topicId: string) {

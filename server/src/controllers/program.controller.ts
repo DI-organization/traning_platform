@@ -73,7 +73,7 @@ export const setWeekLock = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const createTopic = asyncHandler(async (req: Request, res: Response) => {
-  const topic = await programService.createTopic(req.params.weekId, req.body.title, req.body.order ?? 0);
+  const topic = await programService.createTopic(req.params.weekId, req.body.title, req.body.order ?? 0, req.body.content ?? "");
   sendSuccess(res, topic, 201);
 });
 

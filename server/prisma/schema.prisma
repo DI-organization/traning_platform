@@ -233,6 +233,7 @@ model Topic {
   weekId    String
   week      Week     @relation(fields: [weekId], references: [id], onDelete: Cascade)
   title     String
+  content   String   @default("")
   order     Int      @default(0)
   createdAt DateTime @default(now())
 

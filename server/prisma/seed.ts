@@ -8,6 +8,18 @@ const DEMO_PASSWORD = "Password123!";
 const CURRENT_WEEK_AHMAD = 8;
 const CURRENT_WEEK_SARA = 2;
 
+// Overridable so a real trainer identity never has to be committed to this
+// file — set SEED_TRAINER_EMAIL/SEED_TRAINER_PASSWORD in server/.env (not
+// tracked by git) instead. Falls back to the shared demo account otherwise.
+const TRAINER_EMAIL = process.env.SEED_TRAINER_EMAIL || "trainer@example.com";
+const TRAINER_PASSWORD = process.env.SEED_TRAINER_PASSWORD || DEMO_PASSWORD;
+const TRAINER_IS_CUSTOM = Boolean(process.env.SEED_TRAINER_EMAIL || process.env.SEED_TRAINER_PASSWORD);
+
+// A fixed, never-overridden trainer account the test suite logs in as, so
+// running the tests never depends on (or collides with) whichever trainer
+// identity happens to be configured above.
+const QA_TRAINER_EMAIL = "qa-trainer@example.com";
+
 async function main() {
   console.log("Seeding database...");
 
@@ -33,12 +45,25 @@ async function main() {
   await prisma.user.deleteMany();
 
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 12);
+  const trainerPasswordHash = TRAINER_IS_CUSTOM ? await bcrypt.hash(TRAINER_PASSWORD, 12) : passwordHash;
 
   const trainer = await prisma.user.create({
     data: {
       firstName: "Laith",
       lastName: "Tanirah",
-      email: "trainer@example.com",
+      email: TRAINER_EMAIL,
+      passwordHash: trainerPasswordHash,
+      role: "TRAINER",
+      isActive: true,
+    },
+  });
+
+  // Dedicated fixture account for the test suite (see QA_TRAINER_EMAIL above).
+  await prisma.user.create({
+    data: {
+      firstName: "QA",
+      lastName: "Trainer",
+      email: QA_TRAINER_EMAIL,
       passwordHash,
       role: "TRAINER",
       isActive: true,
@@ -135,7 +160,7 @@ async function main() {
           startDate: weekStart,
           endDate: weekEnd,
           topics: {
-            create: weekDef.topics.map((title, i) => ({ title, order: i })),
+            create: weekDef.topics.map((topic, i) => ({ ...topic, order: i })),
           },
           resources: {
             create: weekDef.resources.map((r, i) => ({ ...r, order: i })),
@@ -367,9 +392,10 @@ async function main() {
 
   console.log("\nSeed complete.");
   console.log("Demo accounts (see README for details):");
-  console.log(`  Trainer:   trainer@example.com   / ${DEMO_PASSWORD}`);
+  console.log(`  Trainer:   ${TRAINER_EMAIL}   / ${TRAINER_IS_CUSTOM ? "(from SEED_TRAINER_PASSWORD)" : TRAINER_PASSWORD}`);
   console.log(`  Trainee 1: trainee1@example.com  / ${DEMO_PASSWORD}`);
   console.log(`  Trainee 2: trainee2@example.com  / ${DEMO_PASSWORD}`);
+  console.log(`  QA Trainer (tests only): ${QA_TRAINER_EMAIL} / ${DEMO_PASSWORD}`);
 }
 
 main()
