@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "CommonJS",
-    "moduleResolution": "Node",
     "lib": ["ES2022"],
     "outDir": "dist",
     "strict": true,
@@ -12,11 +11,7 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "declaration": false,
-    "sourceMap": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "sourceMap": true
   },
   "include": ["src", "prisma/seed.ts"],
   "exclude": ["node_modules", "dist"]
